@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
- <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
- <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
- <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip-utils.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Restaurant Billing System</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip-utils.js"></script>
+
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
         .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -20,12 +22,16 @@
         button:hover { background-color: #2980b9; }
         .remove-btn { background-color: #e74c3c; }
         .remove-btn:hover { background-color: #c0392b; }
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-success { background-color: #27ae60; flex: 1; font-size: 16px;}
+        .btn-success:hover { background-color: #219653; }
+        .btn-warning { background-color: #f39c12; flex: 1; font-size: 16px;}
+        .btn-warning:hover { background-color: #d68910; }
         #invoice-output { margin-top: 30px; padding: 20px; border: 1px dashed #7f8c8d; background-color: #fafafa; display: none; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
         .totals { margin-top: 15px; text-align: right; line-height: 1.6; }
-        .signature { margin-top: 40px; text-align: right; font-style: italic; }
     </style>
 </head>
 <body>
@@ -68,73 +74,17 @@
     <button type="button" onclick="addItemRow()">+ Add Item</button>
 
     <hr style="margin: 20px 0;">
-    <button type="button" style="width: 100%; background-color: #27ae60; font-size: 16px;" onclick="generateInvoice()">Generate Invoice</button>
+    
+    <div class="btn-group">
+        <button type="button" class="btn-success" onclick="generatePreview()">Preview Invoice</button>
+        <button type="button" class="btn-warning" onclick="generateDocxBill()">Download Word Doc</button>
+    </div>
 
     <div id="invoice-output"></div>
 </div>
 
 <script>
-
-    function loadFile(url, callback) {
-    PizZipUtils.getBinaryContent(url, callback);
-}
-
-function generateDocxBill() {
-    // 1. Fetch form data (same as before)
-    const restId = parseInt(document.getElementById('restaurant-select').value);
-    const restaurant = restaurants.find(r => r.id === restId);
-    const date = document.getElementById('invoice-date').value;
-    const customer = document.getElementById('customer-name').value || 'Cash Customer';
-    
-    // ... calculate totals, net value, taxes, and amount in words ...
-
-    // 2. Prepare the items array for the template loop
-    let docxItems = [];
-    document.querySelectorAll('.item-row').forEach(row => {
-        let selectElement = row.querySelector('.item-select');
-        let price = parseFloat(selectElement.value);
-        let name = selectElement.options[selectElement.selectedIndex].text.split(' (')[0];
-        let qty = parseInt(row.querySelector('.item-qty').value) || 1;
-        
-        docxItems.push({
-            item_name: name,
-            qty: qty,
-            gross_value: (price * qty).toFixed(2)
-        });
-    });
-
-    // 3. Load the template and inject data
-    loadFile("template.docx", function(error, content) {
-        if (error) { throw error };
-        
-        var zip = new PizZip(content);
-        var doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-
-        // Bind the data to the {} tags in the Word document
-        doc.render({
-            restaurant_name: restaurant.name,
-            gstin: restaurant.gstin,
-            fssai: restaurant.fssai,
-            customer_name: customer,
-            invoice_date: date,
-            items: docxItems, // This loops through the table
-            total_net: netValue.toFixed(2),
-            cgst_amount: cgst.toFixed(2),
-            sgst_amount: sgst.toFixed(2),
-            final_total: finalTotal.toFixed(2),
-            amount_in_words: words,
-            order_id: orderId
-        });
-
-        // 4. Generate and download the file
-        var out = doc.getZip().generate({
-            type: "blob",
-            mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        });
-        saveAs(out, `Invoice_${orderId}.docx`);
-    });
-}
-    // --- 1. Hardcoded Database State ---
+    // --- 1. Database State ---
     const restaurants = [
         { id: 1, name: "Downtown Bistro", address: "123 Main St, Sector 29", gstin: "06AADCD4946L1ZE", fssai: "10019064001810" },
         { id: 2, name: "Uptown Cafe", address: "456 High Road, Cyber Hub", gstin: "06BBECD4946M2XF", fssai: "10019064002999" }
@@ -163,7 +113,7 @@ function generateDocxBill() {
             restSelect.appendChild(option);
         });
         document.getElementById('invoice-date').valueAsDate = new Date();
-        addItemRow(); // Add first empty row
+        addItemRow(); 
     };
 
     // --- 3. Dynamic UI Logic ---
@@ -202,9 +152,8 @@ function generateDocxBill() {
         return str;
     }
 
-    // --- 4. Core Calculation & Rendering ---
-    function generateInvoice() {
-        // Fetch inputs
+    // --- 4. Calculation Logic ---
+    function calculateInvoiceData() {
         const restId = parseInt(document.getElementById('restaurant-select').value);
         const restaurant = restaurants.find(r => r.id === restId);
         const date = document.getElementById('invoice-date').value;
@@ -212,13 +161,12 @@ function generateDocxBill() {
         const address = document.getElementById('delivery-address').value || 'N/A';
         const state = document.getElementById('place-of-supply').value || 'N/A';
         const discountPct = parseFloat(document.getElementById('discount-percent').value) || 0;
-        const orderId = Math.floor(100000000000 + Math.random() * 900000000000); // 12 digit random
+        const orderId = Math.floor(100000000000 + Math.random() * 900000000000); 
 
-        let itemRows = document.querySelectorAll('.item-row');
+        let itemsData = [];
         let totalGross = 0;
-        let itemsHTML = '';
 
-        itemRows.forEach(row => {
+        document.querySelectorAll('.item-row').forEach(row => {
             let selectElement = row.querySelector('.item-select');
             let price = parseFloat(selectElement.value);
             let name = selectElement.options[selectElement.selectedIndex].text.split(' (')[0];
@@ -226,68 +174,86 @@ function generateDocxBill() {
             let amount = price * qty;
             
             totalGross += amount;
-            itemsHTML += `<tr><td>${name}</td><td>${qty}</td><td>₹${price.toFixed(2)}</td><td>₹${amount.toFixed(2)}</td></tr>`;
+            itemsData.push({ item_name: name, qty: qty, unit_price: price.toFixed(2), gross_value: amount.toFixed(2) });
         });
 
         let discountAmt = totalGross * (discountPct / 100);
         let netValue = totalGross - discountAmt;
         let cgst = netValue * 0.025;
         let sgst = netValue * 0.025;
-        let finalTotal = Math.round(netValue + cgst + sgst); // Rounding to nearest Rupee
-
+        let finalTotal = Math.round(netValue + cgst + sgst); 
         let words = numberToWords(finalTotal);
 
-        // Build HTML
+        return { restaurant, date, customer, address, state, orderId, itemsData, totalGross, discountAmt, netValue, cgst, sgst, finalTotal, words };
+    }
+
+    // --- 5. Screen Preview ---
+    function generatePreview() {
+        const data = calculateInvoiceData();
+        let itemsHTML = '';
+        data.itemsData.forEach(item => {
+            itemsHTML += `<tr><td>${item.item_name}</td><td>${item.qty}</td><td>₹${item.unit_price}</td><td>₹${item.gross_value}</td></tr>`;
+        });
+
         const out = document.getElementById('invoice-output');
         out.style.display = 'block';
         out.innerHTML = `
-            <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
-                <h2>TAX INVOICE</h2>
-                <strong>${restaurant.name}</strong><br>
-                ${restaurant.address}<br>
-                GSTIN: ${restaurant.gstin} | FSSAI: ${restaurant.fssai}
-            </div>
-            
-            <div style="display: flex; justify-content: space-between;">
-                <div>
-                    <strong>Customer:</strong> ${customer}<br>
-                    <strong>Delivery Address:</strong> ${address}<br>
-                    <strong>Place of Supply:</strong> ${state}
-                </div>
-                <div style="text-align: right;">
-                    <strong>Order ID:</strong> ${orderId}<br>
-                    <strong>Date:</strong> ${date}<br>
-                    <strong>HSN Code:</strong> 996331 (Restaurant Service)
-                </div>
-            </div>
-
+            <h3>Preview Generated</h3>
+            <p><strong>Customer:</strong> ${data.customer} | <strong>Order:</strong> ${data.orderId}</p>
             <table>
-                <thead>
-                    <tr><th>Particulars</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr>
-                </thead>
-                <tbody>
-                    ${itemsHTML}
-                </tbody>
+                <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+                <tbody>${itemsHTML}</tbody>
             </table>
-
             <div class="totals">
-                <strong>Gross Value:</strong> ₹${totalGross.toFixed(2)}<br>
-                <strong>Discount (${discountPct}%):</strong> -₹${discountAmt.toFixed(2)}<br>
-                <strong>Net Value:</strong> ₹${netValue.toFixed(2)}<br>
-                <strong>CGST (2.5%):</strong> ₹${cgst.toFixed(2)}<br>
-                <strong>SGST (2.5%):</strong> ₹${sgst.toFixed(2)}<br>
-                <h3 style="margin: 5px 0;">Final Total: ₹${finalTotal.toFixed(2)}</h3>
-            </div>
-
-            <p><strong>Amount (in words):</strong> ${words}</p>
-            <p style="font-size: 12px; color: #555;">Amount of INR ${finalTotal.toFixed(2)} settled through digital mode/payment received against Order ID: ${orderId} dated ${date}.<br>Supply attracts reverse charge : No</p>
-
-            <div class="signature">
-                For ${restaurant.name}<br><br>
-                _______________________<br>
-                Authorized Signatory
+                <strong>Final Total: ₹${data.finalTotal.toFixed(2)}</strong>
             </div>
         `;
+    }
+
+    // --- 6. Word Document Generation Logic ---
+    function loadFile(url, callback) {
+        PizZipUtils.getBinaryContent(url, callback);
+    }
+
+    function generateDocxBill() {
+        const data = calculateInvoiceData();
+
+        loadFile("template.docx", function(error, content) {
+            if (error) { 
+                alert("Could not load template.docx. Make sure the file is in the same folder.");
+                throw error; 
+            };
+            
+            var zip = new PizZip(content);
+            var doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+
+            // Map the calculated data directly to the tags in the Word doc
+            doc.render({
+                restaurant_name: data.restaurant.name,
+                restaurant_address: data.restaurant.address,
+                gstin: data.restaurant.gstin,
+                fssai: data.restaurant.fssai,
+                invoice_date: data.date,
+                customer_name: data.customer,
+                delivery_address: data.address,
+                place_of_supply: data.state,
+                items: data.itemsData, 
+                total_gross: data.totalGross.toFixed(2),
+                discount_amount: data.discountAmt.toFixed(2),
+                net_value: data.netValue.toFixed(2),
+                cgst_amount: data.cgst.toFixed(2),
+                sgst_amount: data.sgst.toFixed(2),
+                final_total: data.finalTotal.toFixed(2),
+                amount_in_words: data.words,
+                order_id: data.orderId
+            });
+
+            var out = doc.getZip().generate({
+                type: "blob",
+                mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            });
+            saveAs(out, `Invoice_${data.orderId}.docx`);
+        });
     }
 </script>
 </body>
