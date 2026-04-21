@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Billing System</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1, h2 { text-align: center; color: #2c3e50; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="text"], input[type="number"], input[type="date"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .item-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        button { background-color: #3498db; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        button:hover { background-color: #2980b9; }
+        .remove-btn { background-color: #e74c3c; }
+        .remove-btn:hover { background-color: #c0392b; }
+        #invoice-output { margin-top: 30px; padding: 20px; border: 1px dashed #7f8c8d; background-color: #fafafa; display: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .totals { margin-top: 15px; text-align: right; line-height: 1.6; }
+        .signature { margin-top: 40px; text-align: right; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Bill Generator</h1>
+    
+    <div class="form-group">
+        <label>Select Restaurant</label>
+        <select id="restaurant-select"></select>
+    </div>
+    
+    <div class="form-group">
+        <label>Invoice Date</label>
+        <input type="date" id="invoice-date" required>
+    </div>
+
+    <div class="form-group">
+        <label>Customer Name</label>
+        <input type="text" id="customer-name" placeholder="Enter customer name">
+    </div>
+
+    <div class="form-group">
+        <label>Delivery Address</label>
+        <input type="text" id="delivery-address" placeholder="Enter delivery address">
+    </div>
+
+    <div class="form-group">
+        <label>State Name & Place of Supply</label>
+        <input type="text" id="place-of-supply" placeholder="e.g., Haryana">
+    </div>
+
+    <div class="form-group">
+        <label>Discount (%)</label>
+        <input type="number" id="discount-percent" value="0" min="0" max="100">
+    </div>
+
+    <h3>Items</h3>
+    <div id="items-container"></div>
+    <button type="button" onclick="addItemRow()">+ Add Item</button>
+
+    <hr style="margin: 20px 0;">
+    <button type="button" style="width: 100%; background-color: #27ae60; font-size: 16px;" onclick="generateInvoice()">Generate Invoice</button>
+
+    <div id="invoice-output"></div>
+</div>
+
+<script>
+    // --- 1. Hardcoded Database State ---
+    const restaurants = [
+        { id: 1, name: "Downtown Bistro", address: "123 Main St, Sector 29", gstin: "06AADCD4946L1ZE", fssai: "10019064001810" },
+        { id: 2, name: "Uptown Cafe", address: "456 High Road, Cyber Hub", gstin: "06BBECD4946M2XF", fssai: "10019064002999" }
+    ];
+
+    const menuItems = [
+        { id: 1, name: "Paneer Butter Masala", price: 320 },
+        { id: 2, name: "Garlic Naan", price: 60 },
+        { id: 3, name: "Dal Makhani", price: 280 },
+        { id: 4, name: "Jeera Rice", price: 150 },
+        { id: 5, name: "Tandoori Roti", price: 30 },
+        { id: 6, name: "Chicken Tikka", price: 350 },
+        { id: 7, name: "Vegetable Biryani", price: 250 },
+        { id: 8, name: "Raita", price: 90 },
+        { id: 9, name: "Gulab Jamun (2 pcs)", price: 100 },
+        { id: 10, name: "Masala Chai", price: 50 }
+    ];
+
+    // --- 2. Initialization ---
+    window.onload = () => {
+        const restSelect = document.getElementById('restaurant-select');
+        restaurants.forEach(r => {
+            let option = document.createElement('option');
+            option.value = r.id;
+            option.textContent = r.name;
+            restSelect.appendChild(option);
+        });
+        document.getElementById('invoice-date').valueAsDate = new Date();
+        addItemRow(); // Add first empty row
+    };
+
+    // --- 3. Dynamic UI Logic ---
+    function addItemRow() {
+        const container = document.getElementById('items-container');
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        
+        let selectHTML = `<select class="item-select" style="flex: 2;">`;
+        menuItems.forEach(item => {
+            selectHTML += `<option value="${item.price}">${item.name} (₹${item.price})</option>`;
+        });
+        selectHTML += `</select>`;
+
+        row.innerHTML = `
+            ${selectHTML}
+            <input type="number" class="item-qty" value="1" min="1" style="flex: 1;" placeholder="Qty">
+            <button class="remove-btn" onclick="this.parentElement.remove()">X</button>
+        `;
+        container.appendChild(row);
+    }
+
+    function numberToWords(num) {
+        if (num === 0) return "Zero Rupees";
+        const a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
+        const b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety'];
+        
+        if ((num = num.toString()).length > 9) return 'overflow';
+        let n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+        if (!n) return; let str = '';
+        str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
+        str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
+        str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
+        str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
+        str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'Rupees Only' : 'Rupees Only';
+        return str;
+    }
+
+    // --- 4. Core Calculation & Rendering ---
+    function generateInvoice() {
+        // Fetch inputs
+        const restId = parseInt(document.getElementById('restaurant-select').value);
+        const restaurant = restaurants.find(r => r.id === restId);
+        const date = document.getElementById('invoice-date').value;
+        const customer = document.getElementById('customer-name').value || 'Cash Customer';
+        const address = document.getElementById('delivery-address').value || 'N/A';
+        const state = document.getElementById('place-of-supply').value || 'N/A';
+        const discountPct = parseFloat(document.getElementById('discount-percent').value) || 0;
+        const orderId = Math.floor(100000000000 + Math.random() * 900000000000); // 12 digit random
+
+        let itemRows = document.querySelectorAll('.item-row');
+        let totalGross = 0;
+        let itemsHTML = '';
+
+        itemRows.forEach(row => {
+            let selectElement = row.querySelector('.item-select');
+            let price = parseFloat(selectElement.value);
+            let name = selectElement.options[selectElement.selectedIndex].text.split(' (')[0];
+            let qty = parseInt(row.querySelector('.item-qty').value) || 1;
+            let amount = price * qty;
+            
+            totalGross += amount;
+            itemsHTML += `<tr><td>${name}</td><td>${qty}</td><td>₹${price.toFixed(2)}</td><td>₹${amount.toFixed(2)}</td></tr>`;
+        });
+
+        let discountAmt = totalGross * (discountPct / 100);
+        let netValue = totalGross - discountAmt;
+        let cgst = netValue * 0.025;
+        let sgst = netValue * 0.025;
+        let finalTotal = Math.round(netValue + cgst + sgst); // Rounding to nearest Rupee
+
+        let words = numberToWords(finalTotal);
+
+        // Build HTML
+        const out = document.getElementById('invoice-output');
+        out.style.display = 'block';
+        out.innerHTML = `
+            <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
+                <h2>TAX INVOICE</h2>
+                <strong>${restaurant.name}</strong><br>
+                ${restaurant.address}<br>
+                GSTIN: ${restaurant.gstin} | FSSAI: ${restaurant.fssai}
+            </div>
+            
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <strong>Customer:</strong> ${customer}<br>
+                    <strong>Delivery Address:</strong> ${address}<br>
+                    <strong>Place of Supply:</strong> ${state}
+                </div>
+                <div style="text-align: right;">
+                    <strong>Order ID:</strong> ${orderId}<br>
+                    <strong>Date:</strong> ${date}<br>
+                    <strong>HSN Code:</strong> 996331 (Restaurant Service)
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr><th>Particulars</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr>
+                </thead>
+                <tbody>
+                    ${itemsHTML}
+                </tbody>
+            </table>
+
+            <div class="totals">
+                <strong>Gross Value:</strong> ₹${totalGross.toFixed(2)}<br>
+                <strong>Discount (${discountPct}%):</strong> -₹${discountAmt.toFixed(2)}<br>
+                <strong>Net Value:</strong> ₹${netValue.toFixed(2)}<br>
+                <strong>CGST (2.5%):</strong> ₹${cgst.toFixed(2)}<br>
+                <strong>SGST (2.5%):</strong> ₹${sgst.toFixed(2)}<br>
+                <h3 style="margin: 5px 0;">Final Total: ₹${finalTotal.toFixed(2)}</h3>
+            </div>
+
+            <p><strong>Amount (in words):</strong> ${words}</p>
+            <p style="font-size: 12px; color: #555;">Amount of INR ${finalTotal.toFixed(2)} settled through digital mode/payment received against Order ID: ${orderId} dated ${date}.<br>Supply attracts reverse charge : No</p>
+
+            <div class="signature">
+                For ${restaurant.name}<br><br>
+                _______________________<br>
+                Authorized Signatory
+            </div>
+        `;
+    }
+</script>
+</body>
+</html>
