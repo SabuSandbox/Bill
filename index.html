@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
+ <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
+ <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip-utils.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Restaurant Billing System</title>
     <style>
@@ -70,6 +74,66 @@
 </div>
 
 <script>
+
+    function loadFile(url, callback) {
+    PizZipUtils.getBinaryContent(url, callback);
+}
+
+function generateDocxBill() {
+    // 1. Fetch form data (same as before)
+    const restId = parseInt(document.getElementById('restaurant-select').value);
+    const restaurant = restaurants.find(r => r.id === restId);
+    const date = document.getElementById('invoice-date').value;
+    const customer = document.getElementById('customer-name').value || 'Cash Customer';
+    
+    // ... calculate totals, net value, taxes, and amount in words ...
+
+    // 2. Prepare the items array for the template loop
+    let docxItems = [];
+    document.querySelectorAll('.item-row').forEach(row => {
+        let selectElement = row.querySelector('.item-select');
+        let price = parseFloat(selectElement.value);
+        let name = selectElement.options[selectElement.selectedIndex].text.split(' (')[0];
+        let qty = parseInt(row.querySelector('.item-qty').value) || 1;
+        
+        docxItems.push({
+            item_name: name,
+            qty: qty,
+            gross_value: (price * qty).toFixed(2)
+        });
+    });
+
+    // 3. Load the template and inject data
+    loadFile("template.docx", function(error, content) {
+        if (error) { throw error };
+        
+        var zip = new PizZip(content);
+        var doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+
+        // Bind the data to the {} tags in the Word document
+        doc.render({
+            restaurant_name: restaurant.name,
+            gstin: restaurant.gstin,
+            fssai: restaurant.fssai,
+            customer_name: customer,
+            invoice_date: date,
+            items: docxItems, // This loops through the table
+            total_net: netValue.toFixed(2),
+            cgst_amount: cgst.toFixed(2),
+            sgst_amount: sgst.toFixed(2),
+            final_total: finalTotal.toFixed(2),
+            amount_in_words: words,
+            order_id: orderId
+        });
+
+        // 4. Generate and download the file
+        var out = doc.getZip().generate({
+            type: "blob",
+            mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        });
+        saveAs(out, `Invoice_${orderId}.docx`);
+    });
+}
     // --- 1. Hardcoded Database State ---
     const restaurants = [
         { id: 1, name: "Downtown Bistro", address: "123 Main St, Sector 29", gstin: "06AADCD4946L1ZE", fssai: "10019064001810" },
