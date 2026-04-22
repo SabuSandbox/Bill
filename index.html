@@ -9,215 +9,71 @@
     <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
     <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip-utils.js"></script>
-
-    <style>
-        /* iOS Glassmorphism UI Theme */
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Soft iOS gradient background */
-            min-height: 100vh;
-            margin: 0;
-            padding: 40px 20px;
-            color: #1c1c1e; 
-        }
-        
-        .container { 
-            max-width: 800px; 
-            margin: auto; 
-            /* The Frost Glass Effect */
-            background: rgba(255, 255, 255, 0.5); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px); /* For Mac/Safari */
-            padding: 30px; 
-            border-radius: 24px; 
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); 
-        }
-
-        h1, h2, h3 { text-align: center; color: #000; font-weight: 600; }
-        
-        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .form-group { flex: 1; margin-bottom: 15px; }
-        label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 14px; color: #3a3a3c; }
-        
-        /* Glassy Inputs */
-        input[type="text"], input[type="number"], input[type="date"], select { 
-            width: 100%; 
-            padding: 12px; 
-            background: rgba(255, 255, 255, 0.7); 
-            border: 1px solid rgba(255, 255, 255, 0.9); 
-            border-radius: 12px; 
-            box-sizing: border-box; 
-            font-size: 15px;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-        input:focus, select:focus {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: #007aff; /* iOS Blue */
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
-        }
-
-        .item-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
-        
-        /* iOS Style Buttons */
-        button { 
-            background-color: #007aff; 
-            color: white; 
-            border: none; 
-            padding: 12px 20px; 
-            cursor: pointer; 
-            border-radius: 14px; 
-            font-weight: 600; 
-            font-size: 15px;
-            transition: background-color 0.2s;
-        }
-        button:hover { background-color: #005bb5; }
-        
-        .remove-btn { background-color: #ff3b30; padding: 12px 15px; }
-        .remove-btn:hover { background-color: #c93429; }
-        .add-btn { background-color: rgba(0, 122, 255, 0.1); color: #007aff; width: 100%; border: 1px dashed #007aff; }
-        .add-btn:hover { background-color: rgba(0, 122, 255, 0.2); }
-
-        .btn-group { display: flex; gap: 15px; margin-top: 30px; }
-        .btn-success { background-color: #34c759; flex: 1; font-size: 16px;}
-        .btn-success:hover { background-color: #28a745; }
-        .btn-warning { background-color: #ff9500; flex: 1; font-size: 16px;}
-        .btn-warning:hover { background-color: #e08300; }
-
-        #invoice-output { margin-top: 30px; padding: 20px; border-radius: 16px; background: rgba(255,255,255,0.8); display: none; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { border-bottom: 1px solid rgba(0,0,0,0.1); padding: 12px 8px; text-align: left; }
-        th { font-weight: 600; color: #8e8e93; font-size: 13px; text-transform: uppercase; }
-        .totals { margin-top: 15px; text-align: right; line-height: 1.8; font-size: 15px; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h1>Billing System</h1>
-    
-    <div class="form-row">
-        <div class="form-group">
-            <label>Document Type</label>
-            <select id="doc-type">
-                <option value="template.docx">Tax Invoice</option>
-                <option value="receipt_template.docx">Payment Receipt</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Select Restaurant</label>
-            <select id="restaurant-select">
-                <option value="" disabled selected>Select a Restaurant...</option>
-            </select>
-        </div>
-    </div>
-    
-    <div class="form-row">
-        <div class="form-group">
-            <label>Invoice Date</label>
-            <input type="date" id="invoice-date" required>
-        </div>
-        <div class="form-group">
-            <label>Customer Name</label>
-            <input type="text" id="customer-name" placeholder="Enter customer name">
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label>Delivery Address</label>
-        <input type="text" id="delivery-address" placeholder="Enter delivery address">
-    </div>
-
-    <div class="form-row">
-        <div class="form-group">
-            <label>Place of Supply</label>
-            <input type="text" id="place-of-supply" value="Haryana (06)">
-        </div>
-        <div class="form-group">
-            <label>Discount (%)</label>
-            <input type="number" id="discount-percent" value="0" min="0" max="100">
-        </div>
-    </div>
-
-    <h3>Order Items</h3>
-    <div id="items-container"></div>
-    <button type="button" class="add-btn" onclick="addItemRow()">+ Add Another Item</button>
-    
-    <div class="btn-group">
-        <button type="button" class="btn-success" onclick="generatePreview()">Preview Bill</button>
-        <button type="button" class="btn-warning" onclick="generateDocxBill()">Download Document</button>
-    </div>
-
-    <div id="invoice-output"></div>
-</div>
-
-<script>
-  
-   <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Billing System</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
-    <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
-    <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip-utils.js"></script>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        /* iOS Glassmorphism UI Theme */
+        /* Dark iOS Glassmorphism UI Theme */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); /* Deep dark gradient */
             min-height: 100vh;
             margin: 0;
             padding: 40px 20px;
-            color: #1c1c1e; 
+            color: #e0e0e0; /* Light text for dark mode */
         }
         
         .container { 
             max-width: 800px; 
             margin: auto; 
-            background: rgba(255, 255, 255, 0.5); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
+            /* Dark Frost Glass Effect with high transparency */
+            background: rgba(10, 10, 10, 0.4); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px);
             padding: 30px; 
             border-radius: 24px; 
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); 
+            border: 1px solid rgba(255, 255, 255, 0.15); /* Subtle white border to catch the light */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); 
         }
 
-        h1, h2, h3 { text-align: center; color: #000; font-weight: 600; }
+        h1, h2, h3 { text-align: center; color: #ffffff; font-weight: 600; margin-bottom: 20px;}
         
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
         .form-group { flex: 1; margin-bottom: 15px; }
-        label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 14px; color: #3a3a3c; }
+        label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 14px; color: #b0bec5; }
         
+        /* Dark Glassy Inputs */
         input[type="text"], input[type="number"], input[type="date"], select { 
             width: 100%; 
             padding: 12px; 
-            background: rgba(255, 255, 255, 0.7); 
-            border: 1px solid rgba(255, 255, 255, 0.9); 
+            background: rgba(255, 255, 255, 0.05); /* Highly transparent white */
+            border: 1px solid rgba(255, 255, 255, 0.2); 
             border-radius: 12px; 
             box-sizing: border-box; 
             font-size: 15px;
+            color: #ffffff;
             transition: all 0.3s ease;
             outline: none;
         }
+        
+        /* Fix for select dropdown options visibility in some browsers */
+        option { background-color: #203a43; color: #fff; }
+
         input:focus, select:focus {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: #007aff; 
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #0a84ff; /* Bright iOS Blue */
+            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.3);
+        }
+
+        /* Adjusting the date picker icon for dark mode */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
         }
 
         .item-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
         
         button { 
-            background-color: #007aff; 
+            background-color: #0a84ff; 
             color: white; 
             border: none; 
             padding: 12px 20px; 
@@ -225,31 +81,39 @@
             border-radius: 14px; 
             font-weight: 600; 
             font-size: 15px;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
-        button:hover { background-color: #005bb5; }
+        button:hover { background-color: #0070e0; transform: translateY(-1px); }
         
-        .remove-btn { background-color: #ff3b30; padding: 12px 15px; }
-        .remove-btn:hover { background-color: #c93429; }
-        .add-btn { background-color: rgba(0, 122, 255, 0.1); color: #007aff; width: 100%; border: 1px dashed #007aff; }
-        .add-btn:hover { background-color: rgba(0, 122, 255, 0.2); }
+        .remove-btn { background-color: rgba(255, 69, 58, 0.8); padding: 12px 15px; backdrop-filter: blur(10px); }
+        .remove-btn:hover { background-color: #ff453a; }
+        
+        .add-btn { 
+            background-color: rgba(10, 132, 255, 0.1); 
+            color: #64d2ff; 
+            width: 100%; 
+            border: 1px dashed #0a84ff; 
+            backdrop-filter: blur(10px);
+        }
+        .add-btn:hover { background-color: rgba(10, 132, 255, 0.2); }
 
         .btn-group { display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap; }
-        .btn-success { background-color: #34c759; flex: 1; min-width: 150px; }
-        .btn-success:hover { background-color: #28a745; }
-        .btn-warning { background-color: #ff9500; flex: 1; min-width: 150px; }
-        .btn-warning:hover { background-color: #e08300; }
-        .btn-danger { background-color: #ff3b30; flex: 1; min-width: 150px; }
-        .btn-danger:hover { background-color: #d73229; }
+        .btn-success { background-color: rgba(48, 209, 88, 0.8); flex: 1; min-width: 150px; }
+        .btn-success:hover { background-color: #30d158; }
+        .btn-warning { background-color: rgba(255, 159, 10, 0.8); flex: 1; min-width: 150px; }
+        .btn-warning:hover { background-color: #ff9f0a; }
+        .btn-danger { background-color: rgba(255, 69, 58, 0.8); flex: 1; min-width: 150px; }
+        .btn-danger:hover { background-color: #ff453a; }
 
-        /* Print-friendly output box */
+        /* Output box keeps white background so PDFs render perfectly */
         #invoice-output { 
             margin-top: 30px; 
             border-radius: 16px; 
             background: #ffffff; 
+            color: #333; /* Dark text for the light paper preview */
             display: none; 
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -315,7 +179,7 @@
 </div>
 
 <script>
-     // --- 1. Database State ---
+    // --- 1. Database State ---
     const restaurants = [
         { id: 1, name: "Cyber Hub Social", address: "DLF Cyber Hub, Phase 2, Gurugram", gstin: "06AADCC4946L1ZE", fssai: "10019064001810" },
         { id: 2, name: "Farzi Cafe", address: "Ground Floor, Cyber Hub, Gurugram", gstin: "06BBECD4946M2XF", fssai: "10019064002999" },
@@ -343,11 +207,10 @@
         { id: 24, name: "Ember & Oak", address: "Plot 15, Sector 56", gstin: "06MMNND6666T1Z8", fssai: "10025064008899" },
         { id: 25, name: "Zenith Skybar", address: "Top Floor, Cyber Park, Phase 3", gstin: "06OOPPD9999U1Z9", fssai: "10026064009900" },
         { id: 26, name: "Pearl Orient", address: "South Wing, Ambience Mall", gstin: "06QQRRD3333V1ZA", fssai: "10027064001111" },
-        { id: 27, name: "Downtown Bistro", address: "123 Main St, Sector 29", gstin: "06AADCD4946L1ZE", fssai: "10019064001810" },
+        { id: 27, name: "Downtown Bistro", address: "123 Main St, Sector 29", gstin: "06AADCD4946L1ZE", fssai: "10019064001810" }
     ];
 
     const menuItems = [
-        // --- Starters & Snacks ---
         { id: 1, name: "Edamame with Sea Salt", price: 450 },
         { id: 2, name: "Truffle Parmesan Fries", price: 650 },
         { id: 3, name: "Avocado Crisp Bruschetta", price: 750 },
@@ -372,8 +235,6 @@
         { id: 22, name: "Tandoori Jumbo Prawns", price: 2800 },
         { id: 23, name: "Chicken 65", price: 650 },
         { id: 24, name: "Crispy Corn & Pepper", price: 450 },
-
-        // --- North Indian Main Course (Veg) ---
         { id: 25, name: "Dal Makhani", price: 550 },
         { id: 26, name: "Slow-Cooked Dal Bukhara", price: 950 },
         { id: 27, name: "Yellow Dal Tadka", price: 450 },
@@ -387,8 +248,6 @@
         { id: 35, name: "Chana Masala", price: 450 },
         { id: 36, name: "Aloo Gobi", price: 450 },
         { id: 37, name: "Dum Aloo Kashmiri", price: 550 },
-
-        // --- North Indian Main Course (Non-Veg) ---
         { id: 38, name: "Butter Chicken", price: 850 },
         { id: 39, name: "Chicken Curry Home Style", price: 750 },
         { id: 40, name: "Kadai Chicken", price: 800 },
@@ -399,8 +258,6 @@
         { id: 45, name: "Fish Curry", price: 1100 },
         { id: 46, name: "Prawn Masala", price: 1650 },
         { id: 47, name: "Egg Curry", price: 550 },
-
-        // --- Breads & Rice ---
         { id: 48, name: "Plain Naan", price: 90 },
         { id: 49, name: "Butter Naan", price: 120 },
         { id: 50, name: "Garlic Naan", price: 150 },
@@ -418,8 +275,6 @@
         { id: 62, name: "Chicken Dum Biryani", price: 850 },
         { id: 63, name: "Mutton Dum Biryani", price: 1150 },
         { id: 64, name: "Saffron & Dum Gosht Biryani", price: 1850 },
-
-        // --- South Indian ---
         { id: 65, name: "Plain Dosa", price: 250 },
         { id: 66, name: "Masala Dosa", price: 350 },
         { id: 67, name: "Ghee Roast Masala Dosa", price: 550 },
@@ -429,8 +284,6 @@
         { id: 71, name: "Medu Vada (2 pcs)", price: 250 },
         { id: 72, name: "Mixed Veg Uttapam", price: 350 },
         { id: 73, name: "Chettinad Chicken Pepper Fry", price: 950 },
-
-        // --- Pan-Asian & Chinese ---
         { id: 74, name: "Hakka Noodles (Veg)", price: 450 },
         { id: 75, name: "Chilli Garlic Noodles", price: 450 },
         { id: 76, name: "Pad Thai Noodles", price: 650 },
@@ -441,8 +294,6 @@
         { id: 81, name: "Sushi Roll (California)", price: 950 },
         { id: 82, name: "Sushi Roll (Spicy Tuna)", price: 1250 },
         { id: 83, name: "Green Thai Curry with Jasmine Rice", price: 850 },
-
-        // --- Continental & Italian ---
         { id: 84, name: "Margherita Pizza", price: 650 },
         { id: 85, name: "Pepperoni Pizza", price: 950 },
         { id: 86, name: "Truffle Mushroom Pizza", price: 1150 },
@@ -451,20 +302,18 @@
         { id: 89, name: "Truffle Mushroom Risotto", price: 1450 },
         { id: 90, name: "Grilled Chicken Breast", price: 950 },
         { id: 91, name: "Pan-Seared Himalayan Trout", price: 1850 },
-
-        // --- Desserts ---
         { id: 92, name: "Gulab Jamun (2 pcs)", price: 250 },
         { id: 93, name: "Rasgulla (2 pcs)", price: 250 },
         { id: 94, name: "Moong Dal Halwa", price: 350 },
         { id: 95, name: "Madagascar Vanilla Panna Cotta", price: 850 },
         { id: 96, name: "Valrhona Dark Chocolate Fondant", price: 1150 },
         { id: 97, name: "New York Cheesecake", price: 650 },
-
-        // --- Beverages & Extras ---
         { id: 98, name: "Masala Chai", price: 150 },
         { id: 99, name: "Cold Coffee with Ice Cream", price: 350 },
         { id: 100, name: "Mixed Raita", price: 150 }
     ];
+
+    // --- 2. Initialization ---
     window.onload = () => {
         const restSelect = document.getElementById('restaurant-select');
         restaurants.forEach(r => {
@@ -550,7 +399,7 @@
         return { restaurant, date, customer, address, state, orderId, itemsData, totalGross, discountAmt, netValue, cgst, sgst, finalTotal, words };
     }
 
-    // --- 5. Screen Preview (Now formatted to look like a formal document for the PDF) ---
+    // --- 5. Screen Preview (Rendered as light paper layout) ---
     function generatePreview() {
         const data = calculateInvoiceData();
         if(data.restaurant.name === "N/A") {
@@ -562,10 +411,10 @@
         data.itemsData.forEach(item => {
             itemsHTML += `
                 <tr>
-                    <td style="border: 1px solid #ccc; padding: 10px;">${item.item_name}</td>
-                    <td style="border: 1px solid #ccc; padding: 10px; text-align: center;">${item.qty}</td>
-                    <td style="border: 1px solid #ccc; padding: 10px; text-align: right;">₹${item.unit_price}</td>
-                    <td style="border: 1px solid #ccc; padding: 10px; text-align: right;">₹${item.gross_value}</td>
+                    <td style="border: 1px solid #ddd; padding: 10px;">${item.item_name}</td>
+                    <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item.qty}</td>
+                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">₹${item.unit_price}</td>
+                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">₹${item.gross_value}</td>
                 </tr>`;
         });
 
@@ -575,17 +424,16 @@
         const out = document.getElementById('invoice-output');
         out.style.display = 'block';
         
-        // This HTML is strictly designed to look good when rendered as a PDF
         out.innerHTML = `
-            <div style="padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333;">
+            <div style="padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
                 <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 25px;">
-                    <h2 style="margin: 0 0 10px 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px;">${docTypeName}</h2>
-                    <h3 style="margin: 0; font-size: 20px;">${data.restaurant.name}</h3>
+                    <h2 style="margin: 0 0 10px 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; color: #333;">${docTypeName}</h2>
+                    <h3 style="margin: 0; font-size: 20px; color: #333;">${data.restaurant.name}</h3>
                     <p style="margin: 5px 0 0 0; font-size: 14px; color: #555;">${data.restaurant.address}</p>
-                    <p style="margin: 5px 0 0 0; font-size: 13px;"><strong>GSTIN:</strong> ${data.restaurant.gstin} &nbsp;|&nbsp; <strong>FSSAI:</strong> ${data.restaurant.fssai}</p>
+                    <p style="margin: 5px 0 0 0; font-size: 13px; color: #333;"><strong>GSTIN:</strong> ${data.restaurant.gstin} &nbsp;|&nbsp; <strong>FSSAI:</strong> ${data.restaurant.fssai}</p>
                 </div>
                 
-                <div style="display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 14px; line-height: 1.6;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 14px; line-height: 1.6; color: #333;">
                     <div>
                         <strong>Billed To:</strong><br>
                         ${data.customer}<br>
@@ -599,13 +447,13 @@
                     </div>
                 </div>
 
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 14px;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 14px; color: #333;">
                     <thead>
                         <tr style="background-color: #f8f9fa;">
-                            <th style="border: 1px solid #ccc; padding: 10px; text-align: left;">Particulars</th>
-                            <th style="border: 1px solid #ccc; padding: 10px;">Qty</th>
-                            <th style="border: 1px solid #ccc; padding: 10px; text-align: right;">Price</th>
-                            <th style="border: 1px solid #ccc; padding: 10px; text-align: right;">Total</th>
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Particulars</th>
+                            <th style="border: 1px solid #ddd; padding: 10px;">Qty</th>
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Price</th>
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -613,13 +461,13 @@
                     </tbody>
                 </table>
 
-                <div style="text-align: right; font-size: 14px; line-height: 1.8;">
+                <div style="text-align: right; font-size: 14px; line-height: 1.8; color: #333;">
                     <div>Gross Value: <strong>₹${data.totalGross.toFixed(2)}</strong></div>
                     <div>Discount (${document.getElementById('discount-percent').value}%): <strong>-₹${data.discountAmt.toFixed(2)}</strong></div>
                     <div>Net Value: <strong>₹${data.netValue.toFixed(2)}</strong></div>
                     <div>CGST (2.5%): <strong>₹${data.cgst.toFixed(2)}</strong></div>
                     <div>SGST (2.5%): <strong>₹${data.sgst.toFixed(2)}</strong></div>
-                    <h3 style="margin: 15px 0 0 0; font-size: 20px; border-top: 1px solid #ccc; padding-top: 10px;">Final Total: ₹${data.finalTotal.toFixed(2)}</h3>
+                    <h3 style="margin: 15px 0 0 0; font-size: 20px; border-top: 1px solid #ddd; padding-top: 10px; color: #333;">Final Total: ₹${data.finalTotal.toFixed(2)}</h3>
                 </div>
 
                 <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 13px; color: #555;">
@@ -633,14 +481,12 @@
 
     // --- 6. PDF Generation Logic ---
     function generatePDF() {
-        // Ensure the preview is generated first to capture the HTML layout
         if(!generatePreview()) return;
 
         const element = document.getElementById('invoice-output');
         const data = calculateInvoiceData();
         const filePrefix = document.getElementById('doc-type').value === "receipt_template.docx" ? "Receipt" : "Invoice";
         
-        // Options for html2pdf
         const opt = {
             margin:       0,
             filename:     `${filePrefix}_${data.orderId}.pdf`,
@@ -649,7 +495,6 @@
             jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
         };
 
-        // Convert the preview div directly to a PDF download
         html2pdf().set(opt).from(element).save();
     }
 
