@@ -3,179 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Billing System</title>
+    <title>Premium Billing System</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
     <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
     <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip-utils.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        /* Dark iOS Glassmorphism UI Theme */
+        /* Northern Lights Animated Background */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); /* Deep dark gradient */
-            min-height: 100vh;
             margin: 0;
-            padding: 40px 20px;
-            color: #e0e0e0; /* Light text for dark mode */
-        }
-        
-        .container { 
-            max-width: 800px; 
-            margin: auto; 
-            /* Dark Frost Glass Effect with high transparency */
-            background: rgba(10, 10, 10, 0.4); 
-            backdrop-filter: blur(25px); 
-            -webkit-backdrop-filter: blur(25px);
-            padding: 30px; 
-            border-radius: 24px; 
-            border: 1px solid rgba(255, 255, 255, 0.15); /* Subtle white border to catch the light */
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); 
+            padding: 20px;
+            color: #e0e0e0; 
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #0b1021, #1a0b2e, #0d322d, #091f2c);
+            background-size: 400% 400%;
+            animation: aurora 15s ease infinite;
         }
 
-        h1, h2, h3 { text-align: center; color: #ffffff; font-weight: 600; margin-bottom: 20px;}
+        @keyframes aurora {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .layout-wrapper {
+            display: flex;
+            gap: 30px;
+            max-width: 1400px;
+            margin: auto;
+            align-items: flex-start;
+        }
+
+        /* Glassmorphism Panels */
+        .glass-panel { 
+            background: rgba(20, 20, 30, 0.4); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            padding: 30px; 
+            border-radius: 24px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); 
+        }
+
+        .left-panel { flex: 1; }
+        
+        .right-panel { 
+            flex: 1; 
+            position: sticky; 
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        h1, h2, h3 { color: #ffffff; font-weight: 600; margin-top: 0; }
         
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
         .form-group { flex: 1; margin-bottom: 15px; }
-        label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 14px; color: #b0bec5; }
+        label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 13px; color: #a8b2d1; text-transform: uppercase; letter-spacing: 0.5px;}
         
-        /* Dark Glassy Inputs */
+        /* Dark Glass Inputs */
         input[type="text"], input[type="number"], input[type="date"], select { 
             width: 100%; 
             padding: 12px; 
-            background: rgba(255, 255, 255, 0.05); /* Highly transparent white */
-            border: 1px solid rgba(255, 255, 255, 0.2); 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
             border-radius: 12px; 
             box-sizing: border-box; 
-            font-size: 15px;
+            font-size: 14px;
             color: #ffffff;
             transition: all 0.3s ease;
             outline: none;
         }
         
-        /* Fix for select dropdown options visibility in some browsers */
-        option { background-color: #203a43; color: #fff; }
+        option { background-color: #1a1a2e; color: #fff; }
 
         input:focus, select:focus {
             background: rgba(255, 255, 255, 0.1);
-            border-color: #0a84ff; /* Bright iOS Blue */
-            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.3);
+            border-color: #00ffcc; 
+            box-shadow: 0 0 0 3px rgba(0, 255, 204, 0.2);
         }
 
-        /* Adjusting the date picker icon for dark mode */
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-        }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.7; cursor: pointer; }
 
         .item-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
         
         button { 
-            background-color: #0a84ff; 
             color: white; 
             border: none; 
-            padding: 12px 20px; 
+            padding: 14px 20px; 
             cursor: pointer; 
-            border-radius: 14px; 
+            border-radius: 12px; 
             font-weight: 600; 
-            font-size: 15px;
-            transition: all 0.2s;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        button:hover { background-color: #0070e0; transform: translateY(-1px); }
         
-        .remove-btn { background-color: rgba(255, 69, 58, 0.8); padding: 12px 15px; backdrop-filter: blur(10px); }
-        .remove-btn:hover { background-color: #ff453a; }
+        .remove-btn { background: rgba(255, 59, 48, 0.2); color: #ff3b30; border: 1px solid #ff3b30; padding: 12px 15px; }
+        .remove-btn:hover { background: #ff3b30; color: #fff; }
         
         .add-btn { 
-            background-color: rgba(10, 132, 255, 0.1); 
-            color: #64d2ff; 
+            background: rgba(0, 255, 204, 0.1); 
+            color: #00ffcc; 
             width: 100%; 
-            border: 1px dashed #0a84ff; 
-            backdrop-filter: blur(10px);
+            border: 1px dashed #00ffcc; 
+            margin-top: 10px;
         }
-        .add-btn:hover { background-color: rgba(10, 132, 255, 0.2); }
+        .add-btn:hover { background: rgba(0, 255, 204, 0.2); }
 
-        .btn-group { display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap; }
-        .btn-success { background-color: rgba(48, 209, 88, 0.8); flex: 1; min-width: 150px; }
-        .btn-success:hover { background-color: #30d158; }
-        .btn-warning { background-color: rgba(255, 159, 10, 0.8); flex: 1; min-width: 150px; }
-        .btn-warning:hover { background-color: #ff9f0a; }
-        .btn-danger { background-color: rgba(255, 69, 58, 0.8); flex: 1; min-width: 150px; }
-        .btn-danger:hover { background-color: #ff453a; }
+        .btn-group { display: flex; gap: 15px; }
+        .btn-warning { background: linear-gradient(135deg, #007aff, #005bb5); flex: 1; box-shadow: 0 4px 15px rgba(0, 122, 255, 0.4); }
+        .btn-warning:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 122, 255, 0.6); }
+        .btn-danger { background: linear-gradient(135deg, #ff2d55, #d0183b); flex: 1; box-shadow: 0 4px 15px rgba(255, 45, 85, 0.4); }
+        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 45, 85, 0.6); }
 
-        /* Output box keeps white background so PDFs render perfectly */
+        /* Live Preview Document Style */
         #invoice-output { 
-            margin-top: 30px; 
-            border-radius: 16px; 
+            border-radius: 12px; 
             background: #ffffff; 
-            color: #333; /* Dark text for the light paper preview */
-            display: none; 
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            color: #1a1a1a; 
+            padding: 30px;
+            min-height: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-size: 12px;
+            overflow-y: auto;
+            max-height: 70vh;
+        }
+
+        #invoice-output table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        #invoice-output th, #invoice-output td { border: 1px solid #e0e0e0; padding: 8px; text-align: left; }
+        #invoice-output th { background: #f5f5f7; font-weight: 600; color: #555; }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .layout-wrapper { flex-direction: column; }
+            .right-panel { position: static; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Billing System</h1>
-    
-    <div class="form-row">
-        <div class="form-group">
-            <label>Document Type</label>
-            <select id="doc-type">
-                <option value="template.docx">Tax Invoice</option>
-                <option value="receipt_template.docx">Payment Receipt</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Select Restaurant</label>
-            <select id="restaurant-select">
-                <option value="" disabled selected>Select a Restaurant...</option>
-            </select>
-        </div>
-    </div>
-    
-    <div class="form-row">
-        <div class="form-group">
-            <label>Invoice Date</label>
-            <input type="date" id="invoice-date" required>
-        </div>
-        <div class="form-group">
-            <label>Customer Name</label>
-            <input type="text" id="customer-name" placeholder="Enter customer name">
-        </div>
+<div class="layout-wrapper">
+    <div class="glass-panel left-panel">
+        <h1>Billing System</h1>
+        <form id="billing-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Document Type</label>
+                    <select id="doc-type">
+                        <option value="template.docx">Tax Invoice</option>
+                        <option value="receipt_template.docx">Payment Receipt</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Invoice No.</label>
+                    <input type="text" id="invoice-no" readonly style="color: #00ffcc; font-weight: bold; background: rgba(0,0,0,0.2);">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Select Restaurant</label>
+                    <select id="restaurant-select">
+                        <option value="" disabled selected>Select a Restaurant...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Legal Entity Name</label>
+                    <input type="text" id="legal-name" value="Rohan Kataria" placeholder="Owner/Entity Name">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Invoice Date</label>
+                    <input type="date" id="invoice-date" required>
+                </div>
+                <div class="form-group">
+                    <label>Customer Name</label>
+                    <input type="text" id="customer-name" placeholder="Enter customer name">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Delivery Address</label>
+                <input type="text" id="delivery-address" placeholder="Enter delivery address">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Place of Supply</label>
+                    <input type="text" id="place-of-supply" value="Haryana (06)">
+                </div>
+                <div class="form-group">
+                    <label>Discount (%)</label>
+                    <input type="number" id="discount-percent" value="0" min="0" max="100">
+                </div>
+            </div>
+
+            <h3 style="margin-top: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Order Items</h3>
+            <div id="items-container"></div>
+            <button type="button" class="add-btn" onclick="addItemRow()">+ Add Another Item</button>
+        </form>
     </div>
 
-    <div class="form-group">
-        <label>Delivery Address</label>
-        <input type="text" id="delivery-address" placeholder="Enter delivery address">
-    </div>
-
-    <div class="form-row">
-        <div class="form-group">
-            <label>Place of Supply</label>
-            <input type="text" id="place-of-supply" value="Haryana (06)">
+    <div class="right-panel">
+        <div class="glass-panel" style="padding: 20px;">
+            <div class="btn-group">
+                <button type="button" class="btn-warning" onclick="generateDocxBill()">Download DOCX</button>
+                <button type="button" class="btn-danger" onclick="generatePDF()">Download PDF</button>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Discount (%)</label>
-            <input type="number" id="discount-percent" value="0" min="0" max="100">
+        
+        <div id="invoice-output">
+            <div style="text-align: center; color: #888; margin-top: 200px;">
+                Fill out the form to see the live document preview.
+            </div>
         </div>
     </div>
-
-    <h3>Order Items</h3>
-    <div id="items-container"></div>
-    <button type="button" class="add-btn" onclick="addItemRow()">+ Add Another Item</button>
-    
-    <div class="btn-group">
-        <button type="button" class="btn-success" onclick="generatePreview()">1. Preview Bill</button>
-        <button type="button" class="btn-warning" onclick="generateDocxBill()">2. Download Word Doc</button>
-        <button type="button" class="btn-danger" onclick="generatePDF()">3. Download PDF</button>
-    </div>
-
-    <div id="invoice-output"></div>
 </div>
 
 <script>
@@ -315,6 +366,9 @@
 
     // --- 2. Initialization ---
     window.onload = () => {
+        // Auto-generate invoice number
+        document.getElementById('invoice-no').value = "25MOGSIX" + Math.floor(10000000 + Math.random() * 90000000);
+
         const restSelect = document.getElementById('restaurant-select');
         restaurants.forEach(r => {
             let option = document.createElement('option');
@@ -324,9 +378,12 @@
         });
         document.getElementById('invoice-date').valueAsDate = new Date();
         addItemRow(); 
+
+        // Bind Live Preview Events
+        document.getElementById('billing-form').addEventListener('input', generatePreview);
+        document.getElementById('billing-form').addEventListener('change', generatePreview);
     };
 
-    // --- 3. Dynamic UI Logic ---
     function addItemRow() {
         const container = document.getElementById('items-container');
         const row = document.createElement('div');
@@ -342,9 +399,10 @@
         row.innerHTML = `
             ${selectHTML}
             <input type="number" class="item-qty" value="1" min="1" style="flex: 1;" placeholder="Qty">
-            <button class="remove-btn" onclick="this.parentElement.remove()">X</button>
+            <button type="button" class="remove-btn" onclick="this.parentElement.remove(); generatePreview();">X</button>
         `;
         container.appendChild(row);
+        generatePreview();
     }
 
     function numberToWords(num) {
@@ -362,15 +420,16 @@
         return str;
     }
 
-    // --- 4. Calculation Logic ---
     function calculateInvoiceData() {
         const restId = parseInt(document.getElementById('restaurant-select').value);
-        const restaurant = restaurants.find(r => r.id === restId) || { name: "N/A", address: "N/A", gstin: "N/A", fssai: "N/A" };
+        const restaurant = restaurants.find(r => r.id === restId) || { name: "Pending Selection...", address: "", gstin: "", fssai: "" };
+        const legalName = document.getElementById('legal-name').value || 'Pending...';
         const date = document.getElementById('invoice-date').value;
         const customer = document.getElementById('customer-name').value || 'Cash Customer';
         const address = document.getElementById('delivery-address').value || 'N/A';
         const state = document.getElementById('place-of-supply').value || 'N/A';
         const discountPct = parseFloat(document.getElementById('discount-percent').value) || 0;
+        const invoiceNo = document.getElementById('invoice-no').value;
         const orderId = Math.floor(100000000000 + Math.random() * 900000000000); 
 
         let itemsData = [];
@@ -396,122 +455,112 @@
         let finalTotal = Math.round(netValue + cgst + sgst); 
         let words = numberToWords(finalTotal);
 
-        return { restaurant, date, customer, address, state, orderId, itemsData, totalGross, discountAmt, netValue, cgst, sgst, finalTotal, words };
+        return { restaurant, legalName, invoiceNo, date, customer, address, state, orderId, itemsData, totalGross, discountAmt, netValue, cgst, sgst, finalTotal, words };
     }
 
-    // --- 5. Screen Preview (Rendered as light paper layout) ---
+    // --- Live Preview Generation ---
     function generatePreview() {
         const data = calculateInvoiceData();
-        if(data.restaurant.name === "N/A") {
-            alert("Please select a restaurant first.");
-            return false;
-        }
-
-        let itemsHTML = '';
-        data.itemsData.forEach(item => {
-            itemsHTML += `
-                <tr>
-                    <td style="border: 1px solid #ddd; padding: 10px;">${item.item_name}</td>
-                    <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item.qty}</td>
-                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">₹${item.unit_price}</td>
-                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">₹${item.gross_value}</td>
-                </tr>`;
-        });
-
         const docTypeSelect = document.getElementById('doc-type');
         const docTypeName = docTypeSelect.options[docTypeSelect.selectedIndex].text;
 
+        let itemsHTML = '';
+        if (data.itemsData.length === 0) {
+            itemsHTML = `<tr><td colspan="4" style="text-align: center; color: #888;">No items selected yet.</td></tr>`;
+        } else {
+            data.itemsData.forEach(item => {
+                itemsHTML += `
+                    <tr>
+                        <td>${item.item_name}</td>
+                        <td style="text-align: center;">${item.qty}</td>
+                        <td style="text-align: right;">₹${item.unit_price}</td>
+                        <td style="text-align: right;">₹${item.gross_value}</td>
+                    </tr>`;
+            });
+        }
+
         const out = document.getElementById('invoice-output');
-        out.style.display = 'block';
-        
         out.innerHTML = `
-            <div style="padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-                <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 25px;">
-                    <h2 style="margin: 0 0 10px 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; color: #333;">${docTypeName}</h2>
-                    <h3 style="margin: 0; font-size: 20px; color: #333;">${data.restaurant.name}</h3>
-                    <p style="margin: 5px 0 0 0; font-size: 14px; color: #555;">${data.restaurant.address}</p>
-                    <p style="margin: 5px 0 0 0; font-size: 13px; color: #333;"><strong>GSTIN:</strong> ${data.restaurant.gstin} &nbsp;|&nbsp; <strong>FSSAI:</strong> ${data.restaurant.fssai}</p>
+            <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
+                    <h2 style="margin: 0 0 5px 0; font-size: 20px; text-transform: uppercase;">${docTypeName}</h2>
+                    <h3 style="margin: 0; font-size: 16px;">${data.restaurant.name}</h3>
+                    <p style="margin: 3px 0; font-size: 11px; color: #555;">${data.restaurant.address}</p>
+                    <p style="margin: 3px 0; font-size: 11px;">GSTIN: ${data.restaurant.gstin} &nbsp;|&nbsp; FSSAI: ${data.restaurant.fssai}</p>
                 </div>
                 
-                <div style="display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 14px; line-height: 1.6; color: #333;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; line-height: 1.5;">
                     <div>
-                        <strong>Billed To:</strong><br>
-                        ${data.customer}<br>
+                        <strong>Entity Name:</strong> ${data.legalName}<br>
+                        <strong>Billed To:</strong> ${data.customer}<br>
                         ${data.address}<br>
                         <strong>POS:</strong> ${data.state}
                     </div>
                     <div style="text-align: right;">
-                        <strong>Order ID:</strong> ${data.orderId}<br>
+                        <strong>Invoice No:</strong> ${data.invoiceNo}<br>
                         <strong>Date:</strong> ${data.date}<br>
                         <strong>HSN Code:</strong> 996331
                     </div>
                 </div>
 
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 14px; color: #333;">
+                <table>
                     <thead>
-                        <tr style="background-color: #f8f9fa;">
-                            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Particulars</th>
-                            <th style="border: 1px solid #ddd; padding: 10px;">Qty</th>
-                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Price</th>
-                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Total</th>
+                        <tr>
+                            <th>Particulars</th>
+                            <th style="text-align: center;">Qty</th>
+                            <th style="text-align: right;">Price</th>
+                            <th style="text-align: right;">Total</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        ${itemsHTML}
-                    </tbody>
+                    <tbody>${itemsHTML}</tbody>
                 </table>
 
-                <div style="text-align: right; font-size: 14px; line-height: 1.8; color: #333;">
+                <div style="text-align: right; line-height: 1.6; margin-top: 15px;">
                     <div>Gross Value: <strong>₹${data.totalGross.toFixed(2)}</strong></div>
-                    <div>Discount (${document.getElementById('discount-percent').value}%): <strong>-₹${data.discountAmt.toFixed(2)}</strong></div>
+                    <div>Discount: <strong>-₹${data.discountAmt.toFixed(2)}</strong></div>
                     <div>Net Value: <strong>₹${data.netValue.toFixed(2)}</strong></div>
                     <div>CGST (2.5%): <strong>₹${data.cgst.toFixed(2)}</strong></div>
                     <div>SGST (2.5%): <strong>₹${data.sgst.toFixed(2)}</strong></div>
-                    <h3 style="margin: 15px 0 0 0; font-size: 20px; border-top: 1px solid #ddd; padding-top: 10px; color: #333;">Final Total: ₹${data.finalTotal.toFixed(2)}</h3>
+                    <h3 style="margin: 10px 0 0 0; padding-top: 10px; border-top: 1px solid #ccc;">Final Total: ₹${data.finalTotal.toFixed(2)}</h3>
                 </div>
 
-                <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 13px; color: #555;">
+                <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #eee; font-size: 11px; color: #555;">
                     <p><strong>Amount in words:</strong> ${data.words}</p>
-                    <p>Supply attracts reverse charge: No.</p>
                 </div>
             </div>
         `;
         return true;
     }
 
-    // --- 6. PDF Generation Logic ---
+    // --- File Downloads ---
     function generatePDF() {
-        if(!generatePreview()) return;
-
+        if(!document.getElementById('restaurant-select').value) {
+            alert("Please select a restaurant before downloading.");
+            return;
+        }
+        
         const element = document.getElementById('invoice-output');
         const data = calculateInvoiceData();
-        const filePrefix = document.getElementById('doc-type').value === "receipt_template.docx" ? "Receipt" : "Invoice";
-        
         const opt = {
-            margin:       0,
-            filename:     `${filePrefix}_${data.orderId}.pdf`,
+            margin:       0.2,
+            filename:     `${data.invoiceNo}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true },
             jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
         };
-
         html2pdf().set(opt).from(element).save();
     }
 
-    // --- 7. Word Document Generation Logic ---
-    function loadFile(url, callback) {
-        PizZipUtils.getBinaryContent(url, callback);
-    }
+    function loadFile(url, callback) { PizZipUtils.getBinaryContent(url, callback); }
 
     function generateDocxBill() {
         const data = calculateInvoiceData();
-        if(data.restaurant.name === "N/A") {
+        if(data.restaurant.name === "Pending Selection...") {
             alert("Please select a restaurant before generating the document.");
             return;
         }
 
         const templateFile = document.getElementById('doc-type').value;
-        const filePrefix = templateFile === "receipt_template.docx" ? "Receipt" : "Invoice";
 
         loadFile(templateFile, function(error, content) {
             if (error) { 
@@ -523,6 +572,8 @@
             var doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
 
             doc.render({
+                legal_name: data.legalName,
+                invoice_no: data.invoiceNo,
                 restaurant_name: data.restaurant.name,
                 restaurant_address: data.restaurant.address,
                 gstin: data.restaurant.gstin,
@@ -546,8 +597,7 @@
                 type: "blob",
                 mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             });
-            
-            saveAs(out, `${filePrefix}_${data.orderId}.docx`);
+            saveAs(out, `${data.invoiceNo}.docx`);
         });
     }
 </script>
