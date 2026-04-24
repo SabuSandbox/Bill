@@ -9,144 +9,139 @@
     <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
     <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip-utils.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        /* Bright Glassmorphism Theme */
+        /* Dark Theme UI based on uploaded image */
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             margin: 0;
-            padding: 20px;
-            color: #333; 
+            background-color: #000000;
+            color: #ffffff; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-            /* Bright, vibrant pastel gradient */
-            background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
-            background-attachment: fixed;
         }
         
         .layout-wrapper {
             display: flex;
-            gap: 30px;
-            max-width: 1500px;
-            margin: auto;
-            align-items: flex-start;
+            width: 100%;
+            max-width: 1100px;
+            height: 90vh;
+            background: #0a0a0a;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            border: 1px solid #1a1a1a;
         }
 
-        /* Light Frosted Glass Panels */
-        .glass-panel { 
-            background: rgba(255, 255, 255, 0.4); 
-            backdrop-filter: blur(15px); 
-            -webkit-backdrop-filter: blur(15px);
-            padding: 30px; 
-            border-radius: 24px; 
-            border: 1px solid rgba(255, 255, 255, 0.6); 
-            box-shadow: 0 10px 30px rgba(31, 38, 135, 0.15); 
-        }
-
-        .left-panel { flex: 0 0 450px; }
-        
-        .right-panel { 
+        /* Left Panel: Emerald Green Gradient Glow */
+        .left-panel { 
             flex: 1; 
-            position: sticky; 
-            top: 20px;
+            background: radial-gradient(circle at 30% 40%, rgba(20, 85, 60, 0.9) 0%, rgba(10, 35, 25, 0.8) 40%, #0a0a0a 80%);
+            padding: 50px; 
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            justify-content: center;
+            position: relative;
         }
 
-        h1, h2, h3 { color: #1a1a1a; font-weight: 700; margin-top: 0; }
-        
+        .left-panel h1 { font-size: 36px; font-weight: 500; margin-bottom: 10px; letter-spacing: -0.5px; }
+        .left-panel p { color: #a0a0a0; font-size: 15px; max-width: 250px; line-height: 1.5; }
+
+        /* Right Panel: Dark Form */
+        .right-panel { 
+            flex: 1.2; 
+            padding: 40px 50px;
+            overflow-y: auto;
+            background: #000000;
+        }
+
+        .right-panel::-webkit-scrollbar { width: 8px; }
+        .right-panel::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+
+        .form-header { text-align: center; margin-bottom: 30px; }
+        .form-header h2 { font-size: 20px; font-weight: 500; margin-bottom: 5px; }
+        .form-header p { color: #777; font-size: 12px; }
+
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .form-group { flex: 1; margin-bottom: 15px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 13px; color: #444; text-transform: uppercase; letter-spacing: 0.5px;}
+        .form-group { flex: 1; }
         
-        /* Bright Glass Inputs */
+        label { display: block; font-weight: 400; margin-bottom: 6px; font-size: 12px; color: #888; }
+        
+        /* Dark Inputs */
         input[type="text"], input[type="number"], input[type="date"], select { 
             width: 100%; 
-            padding: 12px; 
-            background: rgba(255, 255, 255, 0.5); 
-            border: 1px solid rgba(255, 255, 255, 0.8); 
-            border-radius: 12px; 
+            padding: 14px; 
+            background: #111111; 
+            border: 1px solid #222222; 
+            border-radius: 8px; 
             box-sizing: border-box; 
-            font-size: 14px;
-            color: #333;
-            transition: all 0.3s ease;
+            font-size: 13px;
+            color: #eeeeee;
             outline: none;
+            transition: border 0.2s;
         }
+        
+        input::placeholder { color: #555; }
+        input:focus, select:focus { border-color: #444; background: #161616; }
 
-        input:focus, select:focus {
-            background: rgba(255, 255, 255, 0.8);
-            border-color: #007aff; 
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
-        }
-
-        /* Optgroup styling for dropdowns */
-        optgroup { font-weight: bold; color: #007aff; background: #fff;}
-        option { color: #333; font-weight: normal; }
+        optgroup { font-weight: 600; color: #888; background: #000; }
+        option { color: #fff; background: #111; }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.5; }
 
         .item-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
         
+        /* Buttons matching the image style */
         button { 
-            color: white; 
             border: none; 
-            padding: 14px 20px; 
+            padding: 14px; 
             cursor: pointer; 
-            border-radius: 12px; 
-            font-weight: 600; 
-            font-size: 14px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            border-radius: 8px; 
+            font-weight: 500; 
+            font-size: 13px;
+            transition: opacity 0.2s;
+            width: 100%;
         }
+        button:hover { opacity: 0.8; }
         
-        .remove-btn { background: rgba(255, 59, 48, 0.8); padding: 12px 15px; }
-        .remove-btn:hover { background: #ff3b30; }
+        .remove-btn { background: #1a1a1a; color: #ff453a; border: 1px solid #333; width: auto; padding: 14px 18px;}
+        .add-btn { background: transparent; color: #888; border: 1px dashed #333; margin-bottom: 20px; }
         
-        .add-btn { 
-            background: rgba(0, 122, 255, 0.1); 
-            color: #007aff; 
-            width: 100%; 
-            border: 2px dashed #007aff; 
-            margin-top: 10px;
-        }
-        .add-btn:hover { background: rgba(0, 122, 255, 0.2); }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-primary { background: #ffffff; color: #000000; }
+        .btn-secondary { background: #111111; color: #ffffff; border: 1px solid #333; }
 
-        .btn-group { display: flex; gap: 15px; }
-        .btn-warning { background: linear-gradient(135deg, #007aff, #005bb5); flex: 1; box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3); }
-        .btn-warning:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 122, 255, 0.5); }
-        .btn-danger { background: linear-gradient(135deg, #ff2d55, #d0183b); flex: 1; box-shadow: 0 4px 15px rgba(255, 45, 85, 0.3); }
-        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 45, 85, 0.5); }
-
-        /* Unified Document Preview Style (Matches DOCX exactly) */
-        #invoice-output { 
-            border-radius: 12px; 
-            background: #ffffff; 
-            color: #1a1a1a; 
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            font-size: 11px;
-            overflow-y: auto;
-            max-height: 80vh;
-        }
-
-        #invoice-output table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 10px; }
-        #invoice-output th, #invoice-output td { border: 1px solid #ccc; padding: 6px; text-align: right; }
-        #invoice-output th { background: #f5f5f7; font-weight: 600; text-align: center; }
-        #invoice-output td:first-child, #invoice-output th:first-child { text-align: left; }
-        
-        @media (max-width: 1000px) {
-            .layout-wrapper { flex-direction: column; }
-            .left-panel { flex: none; width: 100%; box-sizing: border-box; }
-            .right-panel { position: static; }
+        @media (max-width: 800px) {
+            .layout-wrapper { flex-direction: column; height: auto; }
+            .left-panel { padding: 40px 20px; text-align: center; }
+            .left-panel p { margin: auto; }
+            .right-panel { padding: 30px 20px; }
         }
     </style>
 </head>
 <body>
 
 <div class="layout-wrapper">
-    <div class="glass-panel left-panel">
-        <h1>Billing System</h1>
+    <div class="left-panel">
+        <h1>Invoice<br>Generator</h1>
+        <p>Complete these easy steps to generate, preview, and print your restaurant documents.</p>
+    </div>
+
+    <div class="right-panel">
+        <div class="form-header">
+            <h2>Generate Document</h2>
+            <p>Enter your details to create the invoice</p>
+        </div>
+
         <form id="billing-form">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Select Restaurant</label>
+                <select id="restaurant-select">
+                    <option value="" disabled selected>Select a Restaurant...</option>
+                </select>
+            </div>
+            
             <div class="form-row">
                 <div class="form-group">
                     <label>Document Type</label>
@@ -157,26 +152,25 @@
                 </div>
                 <div class="form-group">
                     <label>Invoice No.</label>
-                    <input type="text" id="invoice-no" readonly style="color: #007aff; font-weight: bold; background: rgba(255,255,255,0.8);">
+                    <input type="text" id="invoice-no" readonly style="color: #fff; background: #0a0a0a;">
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Select Restaurant</label>
-                <select id="restaurant-select">
-                    <option value="" disabled selected>Select a Restaurant...</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label>Legal Entity Name</label>
-                <input type="text" id="legal-name" placeholder="Owner/Entity Name">
-            </div>
-            
             <div class="form-row">
+                <div class="form-group">
+                    <label>Legal Entity Name</label>
+                    <input type="text" id="legal-name" placeholder="eg. John Doe">
+                </div>
                 <div class="form-group">
                     <label>Invoice Date</label>
                     <input type="date" id="invoice-date" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Customer Name</label>
+                    <input type="text" id="customer-name" placeholder="eg. Francisco">
                 </div>
                 <div class="form-group">
                     <label>Discount (%)</label>
@@ -184,45 +178,35 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Customer Name</label>
-                <input type="text" id="customer-name" placeholder="Enter customer name">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Delivery Address</label>
+                    <input type="text" id="delivery-address" placeholder="Enter delivery address">
+                </div>
+                <div class="form-group">
+                    <label>Place of Supply</label>
+                    <input type="text" id="place-of-supply" value="Haryana (06)">
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Delivery Address</label>
-                <input type="text" id="delivery-address" placeholder="Enter delivery address">
+            <div style="margin: 25px 0 10px; border-bottom: 1px solid #222; padding-bottom: 10px;">
+                <label style="font-size: 14px; color: #fff;">Order Items</label>
             </div>
-
-            <div class="form-group">
-                <label>Place of Supply</label>
-                <input type="text" id="place-of-supply" value="Haryana (06)">
-            </div>
-
-            <h3 style="margin-top: 20px; border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 10px;">Order Items</h3>
+            
             <div id="items-container"></div>
-            <button type="button" class="add-btn" onclick="addItemRow()">+ Add Another Item</button>
-        </form>
-    </div>
-
-    <div class="right-panel">
-        <div class="glass-panel" style="padding: 20px;">
+            <button type="button" class="add-btn" onclick="addItemRow()">Add Item</button>
+            
             <div class="btn-group">
-                <button type="button" class="btn-warning" onclick="generateDocxBill()">Download DOCX</button>
-                <button type="button" class="btn-danger" onclick="generatePDF()">Download PDF</button>
+                <button type="button" class="btn-secondary" onclick="openPreview('view')">Preview</button>
+                <button type="button" class="btn-secondary" onclick="generateDocxBill()">Download Word</button>
             </div>
-        </div>
-        
-        <div id="invoice-output">
-            <div style="text-align: center; color: #888; margin-top: 200px; font-size: 16px;">
-                Fill out the form to see the live document preview.
-            </div>
-        </div>
+            <button type="button" class="btn-primary" style="margin-top: 10px;" onclick="openPreview('print')">Print Document</button>
+        </form>
     </div>
 </div>
 
 <script>
-    // --- 1. Database State with Categories & Random Names ---
+    // --- 1. Database State ---
     const restaurants = [
         { id: 1, name: "Cyber Hub Social", address: "DLF Cyber Hub, Phase 2, Gurugram", gstin: "06AADCC4946L1ZE", fssai: "10019064001810", legalName: "Rahul Sharma" },
         { id: 2, name: "Farzi Cafe", address: "Ground Floor, Cyber Hub, Gurugram", gstin: "06BBECD4946M2XF", fssai: "10019064002999", legalName: "Priya Desai" },
@@ -234,52 +218,39 @@
         { id: 8, name: "Pirates of Grill", address: "MGF Megacity Mall, MG Road, Gurugram", gstin: "06IIJJD8888R1Z6", fssai: "10023011006677", legalName: "Sneha Patel" },
         { id: 9, name: "Striker Pub & Brewery", address: "Sector 29, Gurugram", gstin: "06KKLLD4444S1Z7", fssai: "10024011007788", legalName: "Rohan Verma" },
         { id: 10, name: "Prankster", address: "Sector 29 Market, Gurugram", gstin: "06MMNND6666T1Z8", fssai: "10025064008899", legalName: "Neha Gupta" }
-        // Note: I truncated the list to 10 for code brevity, you can add all 27 back with legalNames!
     ];
 
-    const menuItems = [
-        // Starters & Snacks
-        { id: 1, name: "Edamame with Sea Salt", price: 450, category: "Starters & Snacks" },
-        { id: 2, name: "Truffle Parmesan Fries", price: 650, category: "Starters & Snacks" },
-        { id: 7, name: "Punjabi Samosa (2 pcs)", price: 150, category: "Starters & Snacks" },
-        { id: 12, name: "24K Gold Vark Paneer Tikka", price: 1850, category: "Starters & Snacks" },
-        { id: 17, name: "Tandoori Chicken (Half)", price: 850, category: "Starters & Snacks" },
-        // Main Course (Veg)
-        { id: 25, name: "Dal Makhani", price: 550, category: "Main Course (Veg)" },
-        { id: 28, name: "Paneer Butter Masala", price: 650, category: "Main Course (Veg)" },
-        // Main Course (Non-Veg)
-        { id: 38, name: "Butter Chicken", price: 850, category: "Main Course (Non-Veg)" },
-        { id: 42, name: "Mutton Rogan Josh", price: 1150, category: "Main Course (Non-Veg)" },
-        // Breads & Rice
-        { id: 50, name: "Garlic Naan", price: 150, category: "Breads & Rice" },
-        { id: 61, name: "Vegetable Biryani", price: 650, category: "Breads & Rice" },
-        // South Indian
-        { id: 66, name: "Masala Dosa", price: 350, category: "South Indian" },
-        // Pan-Asian & Chinese
-        { id: 74, name: "Hakka Noodles (Veg)", price: 450, category: "Pan-Asian & Chinese" },
-        // Continental & Italian
-        { id: 84, name: "Margherita Pizza", price: 650, category: "Continental & Italian" },
-        // Desserts & Beverages
-        { id: 92, name: "Gulab Jamun (2 pcs)", price: 250, category: "Desserts" },
-        { id: 98, name: "Masala Chai", price: 150, category: "Beverages" }
-        // Note: Paste your full 100 items here and assign them a 'category' key!
+    // Array Generation for exactly 300 Items (Dense format to save tokens)
+    const rawItemsData = [
+        // Snacks & Appetizers (50)
+        ...Array.from({length: 50}, (_, i) => ["Snacks & Appetizers", `Samosa Variation ${i+1}`, 50 + (i*5)]),
+        // North Indian (50)
+        ...Array.from({length: 50}, (_, i) => ["North Indian", `Paneer Dish ${i+1}`, 200 + (i*10)]),
+        // South Indian (50)
+        ...Array.from({length: 50}, (_, i) => ["South Indian", `Dosa Type ${i+1}`, 150 + (i*8)]),
+        // Chinese & Asian (50)
+        ...Array.from({length: 50}, (_, i) => ["Chinese & Asian", `Noodles/Dimsum ${i+1}`, 250 + (i*12)]),
+        // Sweets & Desserts (50)
+        ...Array.from({length: 50}, (_, i) => ["Sweets & Desserts", `Indian Sweet ${i+1}`, 100 + (i*6)]),
+        // Drinks & Beverages (50)
+        ...Array.from({length: 50}, (_, i) => ["Drinks & Beverages", `Mocktail/Drink ${i+1}`, 120 + (i*5)])
     ];
+    // Map to final array
+    const menuItems = rawItemsData.map((item, index) => ({ id: index + 1, category: item[0], name: item[1], price: item[2] }));
 
-    // --- 2. Initialization & Dropdown Building ---
+    // Generate Select Options
     let selectDropdownHTML = `<select class="item-select" style="flex: 2;"><option value="" disabled selected>Select an Item...</option>`;
-    
-    // Group menu items by category automatically
     const categories = [...new Set(menuItems.map(item => item.category))];
     categories.forEach(cat => {
         selectDropdownHTML += `<optgroup label="${cat}">`;
         menuItems.filter(i => i.category === cat).forEach(item => {
-            // Using ID as value to fetch full item data easily later
             selectDropdownHTML += `<option value="${item.id}">${item.name} (₹${item.price})</option>`;
         });
         selectDropdownHTML += `</optgroup>`;
     });
     selectDropdownHTML += `</select>`;
 
+    // --- 2. Initialization & Auto-Population ---
     window.onload = () => {
         document.getElementById('invoice-no').value = "25MOGSIX" + Math.floor(10000000 + Math.random() * 90000000);
 
@@ -287,34 +258,62 @@
         restaurants.forEach(r => {
             let option = document.createElement('option');
             option.value = r.id;
-            option.textContent = r.name;
+            // Append address in brackets
+            option.textContent = `${r.name} (${r.address})`;
             restSelect.appendChild(option);
         });
+        
         document.getElementById('invoice-date').valueAsDate = new Date();
-        addItemRow(); 
 
-        // Auto-fill Legal Entity Name when restaurant changes
-        document.getElementById('restaurant-select').addEventListener('change', (e) => {
+        restSelect.addEventListener('change', (e) => {
             const selectedRest = restaurants.find(r => r.id === parseInt(e.target.value));
             if(selectedRest) document.getElementById('legal-name').value = selectedRest.legalName;
-            generatePreview();
         });
 
-        // Bind Live Preview Events
-        document.getElementById('billing-form').addEventListener('input', generatePreview);
+        // Trigger Auto-Fill Logic
+        autoFillInvoice();
     };
 
-    function addItemRow() {
+    function autoFillInvoice() {
+        const container = document.getElementById('items-container');
+        container.innerHTML = '';
+        let total = 0;
+        let selected = [];
+        let attempts = 0;
+
+        // Loop until we hit a combination between 4000 and 10000
+        while ((total < 4000 || total > 10000) && attempts < 100) {
+            total = 0;
+            selected = [];
+            let count = Math.floor(Math.random() * 6) + 5; // 5 to 10 items
+            for (let i = 0; i < count; i++) {
+                let item = menuItems[Math.floor(Math.random() * menuItems.length)];
+                let qty = Math.floor(Math.random() * 4) + 1; // 1 to 4 quantity
+                selected.push({ id: item.id, qty: qty });
+                total += item.price * qty;
+            }
+            attempts++;
+        }
+
+        // Render the successful combination
+        selected.forEach(s => addItemRow(s.id, s.qty));
+    }
+
+    function addItemRow(selectedId = null, defaultQty = 1) {
         const container = document.getElementById('items-container');
         const row = document.createElement('div');
         row.className = 'item-row';
         row.innerHTML = `
             ${selectDropdownHTML}
-            <input type="number" class="item-qty" value="1" min="1" style="flex: 1;" placeholder="Qty">
-            <button type="button" class="remove-btn" onclick="this.parentElement.remove(); generatePreview();">X</button>
+            <input type="number" class="item-qty" value="${defaultQty}" min="1" style="flex: 0.5;" placeholder="Qty">
+            <button type="button" class="remove-btn" title="Remove" onclick="this.parentElement.remove();">✕</button>
         `;
         container.appendChild(row);
-        generatePreview();
+
+        // Pre-select if ID provided
+        if(selectedId) {
+            row.querySelector('.item-select').value = selectedId;
+        }
     }
 
     function numberToWords(num) {
@@ -332,7 +331,6 @@
         return str;
     }
 
-    // --- 3. Per-Line Item Calculation Engine ---
     function calculateInvoiceData() {
         const restId = parseInt(document.getElementById('restaurant-select').value);
         const restaurant = restaurants.find(r => r.id === restId) || { name: "Pending Selection...", address: "", gstin: "", fssai: "" };
@@ -353,12 +351,10 @@
             let itemId = parseInt(selectElement.value);
             if (isNaN(itemId)) return; 
 
-            // Fetch the item details
             let item = menuItems.find(i => i.id === itemId);
             let price = item.price;
             let qty = parseInt(row.querySelector('.item-qty').value) || 1;
             
-            // INDEPENDENT LINE ITEM MATH
             let gross = price * qty;
             let disc = gross * (discountPct / 100);
             let net = gross - disc;
@@ -366,7 +362,6 @@
             let sgst = net * 0.025;
             let total = net + cgst + sgst;
 
-            // Roll up to grand totals
             grandGross += gross;
             grandDiscount += disc;
             grandNet += net;
@@ -375,15 +370,9 @@
             grandTotal += total;
 
             itemsData.push({ 
-                item_name: item.name, 
-                qty: qty, 
-                unit_price: price.toFixed(2), 
-                gross_value: gross.toFixed(2),
-                discount_amount: disc.toFixed(2),
-                net_value: net.toFixed(2),
-                cgst_amount: cgst.toFixed(2),
-                sgst_amount: sgst.toFixed(2),
-                total: total.toFixed(2)
+                item_name: item.name, qty: qty, unit_price: price.toFixed(2), gross_value: gross.toFixed(2),
+                discount_amount: disc.toFixed(2), net_value: net.toFixed(2), cgst_amount: cgst.toFixed(2),
+                sgst_amount: sgst.toFixed(2), total: total.toFixed(2)
             });
         });
 
@@ -394,112 +383,107 @@
                  grandGross, grandDiscount, grandNet, grandCgst, grandSgst, grandTotal, words };
     }
 
-    // --- 4. Live Preview (Matches DOCX Layout) ---
-    function generatePreview() {
+    // --- 3. Preview & Print Logic (Opens in New Tab) ---
+    function openPreview(action) {
+        if(!document.getElementById('restaurant-select').value) {
+            alert("Please select a restaurant first.");
+            return;
+        }
+
         const data = calculateInvoiceData();
         const docTypeName = document.getElementById('doc-type').options[document.getElementById('doc-type').selectedIndex].text;
 
         let itemsHTML = '';
-        if (data.itemsData.length === 0) {
-            itemsHTML = `<tr><td colspan="7" style="text-align: center; color: #888;">No items selected yet.</td></tr>`;
-        } else {
-            data.itemsData.forEach(item => {
-                itemsHTML += `
-                    <tr>
-                        <td style="text-align: left;">${item.qty} x ${item.item_name}</td>
-                        <td>${item.gross_value}</td>
-                        <td>${item.discount_amount}</td>
-                        <td>${item.net_value}</td>
-                        <td>${item.cgst_amount}</td>
-                        <td>${item.sgst_amount}</td>
-                        <td><strong>${item.total}</strong></td>
-                    </tr>`;
-            });
-        }
+        data.itemsData.forEach(item => {
+            itemsHTML += `
+                <tr>
+                    <td style="text-align: left;">${item.qty} x ${item.item_name}</td>
+                    <td>${item.gross_value}</td>
+                    <td>${item.discount_amount}</td>
+                    <td>${item.net_value}</td>
+                    <td>${item.cgst_amount}</td>
+                    <td>${item.sgst_amount}</td>
+                    <td><strong>${item.total}</strong></td>
+                </tr>`;
+        });
 
-        const out = document.getElementById('invoice-output');
-        out.innerHTML = `
-            <div style="font-family: Arial, sans-serif;">
-                
-                <h2 style="margin: 0 0 10px 0; font-size: 18px;">${docTypeName}</h2>
-                <div style="font-size: 11px; margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+        const printHTML = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>${data.invoiceNo} - Preview</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 40px; color: #111; max-width: 900px; margin: auto; }
+                    h2 { text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 10px; }
+                    .header-info { font-size: 13px; margin-bottom: 20px; line-height: 1.6; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+                    th, td { border: 1px solid #ccc; padding: 8px; text-align: right; }
+                    th { background: #f9f9f9; text-align: center; }
+                    td:first-child, th:first-child { text-align: left; }
+                    .totals { text-align: right; margin-top: 20px; font-size: 14px; }
+                    .footer { margin-top: 40px; font-size: 12px; color: #555; border-top: 1px solid #eee; padding-top: 20px;}
+                    @media print { body { padding: 0; } }
+                </style>
+            </head>
+            <body>
+                <h2>${docTypeName}</h2>
+                <div class="header-info">
                     <strong>Legal Entity Name:</strong> ${data.legalName}<br>
                     <strong>Restaurant Name:</strong> ${data.restaurant.name}<br>
-                    <strong>Restaurant Address:</strong> ${data.restaurant.address} <strong>GSTIN:</strong> ${data.restaurant.gstin}<br>
-                    <strong>Restaurant FSSAI:</strong> ${data.restaurant.fssai}
+                    <strong>Address:</strong> ${data.restaurant.address} | <strong>GSTIN:</strong> ${data.restaurant.gstin}<br>
+                    <strong>FSSAI:</strong> ${data.restaurant.fssai}
                 </div>
-                
-                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 11px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; line-height: 1.6;">
                     <div>
                         <strong>Invoice No.:</strong> ${data.invoiceNo}<br>
-                        <strong>Invoice Date:</strong> ${data.date}<br>
-                        <strong>Customer Name:</strong> ${data.customer}<br>
-                        <strong>Delivery Address:</strong> ${data.address}<br>
-                        <strong>State name & Place of Supply:</strong> ${data.state}
+                        <strong>Date:</strong> ${data.date}<br>
+                        <strong>Customer:</strong> ${data.customer}<br>
+                        <strong>Delivery:</strong> ${data.address}<br>
+                        <strong>POS:</strong> ${data.state}
                     </div>
                     <div style="text-align: right;">
                         <strong>HSN Code:</strong> 996331<br>
-                        <strong>Service Description:</strong> Restaurant Service
+                        <strong>Service:</strong> Restaurant Service
                     </div>
                 </div>
-
                 <table>
                     <thead>
-                        <tr>
-                            <th>Particulars</th>
-                            <th>Gross value</th>
-                            <th>Discount</th>
-                            <th>Net value</th>
-                            <th>CGST (2.5%)</th>
-                            <th>SGST (2.5%)</th>
-                            <th>Total</th>
-                        </tr>
+                        <tr><th>Particulars</th><th>Gross value</th><th>Discount</th><th>Net value</th><th>CGST (2.5%)</th><th>SGST (2.5%)</th><th>Total</th></tr>
                     </thead>
                     <tbody>${itemsHTML}</tbody>
                 </table>
-
-                <div style="text-align: right; margin-top: 10px;">
-                    <h3 style="margin: 0; font-size: 16px;">Final Total: ₹${data.grandTotal.toFixed(2)}</h3>
+                <div class="totals">
+                    <h3>Final Total: ₹${data.grandTotal.toFixed(2)}</h3>
                 </div>
-
-                <div style="margin-top: 20px; font-size: 11px;">
+                <div class="footer">
                     <p><strong>Amount (in words):</strong> ${data.words}</p>
                     <p>Amount of INR ${data.grandTotal.toFixed(2)} settled through digital mode/payment received against Order ID: ${data.orderId} dated ${data.date}</p>
                     <p>Supply attracts reverse charge : No</p>
                 </div>
-            </div>
+            </body>
+            </html>
         `;
-        return true;
-    }
 
-    // --- 5. File Downloads ---
-    function generatePDF() {
-        if(!document.getElementById('restaurant-select').value) {
-            alert("Please select a restaurant before downloading.");
-            return;
+        let printWindow = window.open('', '_blank');
+        printWindow.document.write(printHTML);
+        printWindow.document.close();
+
+        if(action === 'print') {
+            printWindow.focus();
+            setTimeout(() => { printWindow.print(); }, 500);
         }
-        
-        const element = document.getElementById('invoice-output');
-        const data = calculateInvoiceData();
-        const opt = {
-            margin:       0.3,
-            filename:     `${data.invoiceNo}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(element).save();
     }
 
+    // --- 4. DOCX Download Logic ---
     function loadFile(url, callback) { PizZipUtils.getBinaryContent(url, callback); }
 
     function generateDocxBill() {
-        const data = calculateInvoiceData();
-        if(data.restaurant.name === "Pending Selection...") {
+        if(!document.getElementById('restaurant-select').value) {
             alert("Please select a restaurant before generating the document.");
             return;
         }
 
+        const data = calculateInvoiceData();
         const templateFile = document.getElementById('doc-type').value;
 
         loadFile(templateFile, function(error, content) {
@@ -528,10 +512,7 @@
                 order_id: data.orderId
             });
 
-            var out = doc.getZip().generate({
-                type: "blob",
-                mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            });
+            var out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
             saveAs(out, `${data.invoiceNo}.docx`);
         });
     }
