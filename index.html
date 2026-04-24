@@ -11,11 +11,10 @@
     <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip-utils.js"></script>
 
     <style>
-        /* Dark Neon UI Theme based on the uploaded image */
         body { 
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             margin: 0;
-            background-color: #050505; /* Deep dark background */
+            background-color: #050505; 
             background-image: radial-gradient(circle at 50% 50%, #110a1f 0%, #050505 100%);
             color: #ffffff; 
             display: flex;
@@ -25,7 +24,6 @@
             padding: 40px 20px;
         }
         
-        /* The Glowing Card Wrapper */
         .glow-wrapper {
             position: relative;
             width: 100%;
@@ -34,7 +32,6 @@
             z-index: 1;
         }
 
-        /* The glowing border effect using pseudo-element */
         .glow-wrapper::before {
             content: '';
             position: absolute;
@@ -46,9 +43,8 @@
             opacity: 0.8;
         }
 
-        /* The Main Form Container */
         .card-content {
-            background: #0f0a18; /* Dark purple/black inner background */
+            background: #0f0a18; 
             border-radius: 16px;
             padding: 40px 50px;
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -64,7 +60,6 @@
         
         label { display: block; font-weight: 400; margin-bottom: 8px; font-size: 12px; color: #aaa; }
         
-        /* Dark Inputs */
         input[type="text"], input[type="number"], input[type="date"], select { 
             width: 100%; 
             padding: 12px 14px; 
@@ -79,10 +74,7 @@
         }
         
         input::placeholder { color: #555; }
-        input:focus, select:focus { 
-            border-color: #7000ff; 
-            background: rgba(255, 255, 255, 0.06); 
-        }
+        input:focus, select:focus { border-color: #7000ff; background: rgba(255, 255, 255, 0.06); }
 
         optgroup { font-weight: 600; color: #888; background: #0f0a18; }
         option { color: #fff; background: #1a1125; }
@@ -90,7 +82,6 @@
 
         .item-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
         
-        /* Button Styles */
         button { 
             border: none; 
             padding: 14px; 
@@ -103,21 +94,10 @@
         }
         button:active { transform: scale(0.98); }
         
-        /* Primary White Button (matches image 'Save changes') */
-        .btn-primary { 
-            background: #ffffff; 
-            color: #000000; 
-            margin-top: 15px;
-            font-weight: 600;
-        }
+        .btn-primary { background: #ffffff; color: #000000; margin-top: 15px; font-weight: 600; }
         .btn-primary:hover { background: #e0e0e0; }
 
-        /* Secondary Outline Buttons */
-        .btn-secondary { 
-            background: transparent; 
-            color: #cccccc; 
-            border: 1px solid rgba(255,255,255,0.15); 
-        }
+        .btn-secondary { background: transparent; color: #cccccc; border: 1px solid rgba(255,255,255,0.15); }
         .btn-secondary:hover { background: rgba(255,255,255,0.05); color: #fff;}
 
         .remove-btn { background: transparent; color: #ff453a; border: 1px solid rgba(255, 69, 58, 0.3); width: auto; padding: 12px 16px;}
@@ -215,7 +195,6 @@
 </div>
 
 <script>
-    // --- 1. Database State ---
     const restaurants = [
         { id: 1, name: "Cyber Hub Social", address: "DLF Cyber Hub, Phase 2, Gurugram", gstin: "06AADCC4946L1ZE", fssai: "10019064001810", legalName: "Rahul Sharma" },
         { id: 2, name: "Farzi Cafe", address: "Ground Floor, Cyber Hub, Gurugram", gstin: "06BBECD4946M2XF", fssai: "10019064002999", legalName: "Priya Desai" },
@@ -229,7 +208,6 @@
         { id: 10, name: "Prankster", address: "Sector 29 Market, Gurugram", gstin: "06MMNND6666T1Z8", fssai: "10025064008899", legalName: "Neha Gupta" }
     ];
 
-    // High-Density Menu Setup
     const menuRaw = {
         "Snacks & Appetizers": [
             ["Punjabi Samosa (2 pcs)", 150], ["Aloo Tikki Chaat", 200], ["Dahi Bhalla", 220], ["Papdi Chaat", 180],
@@ -262,7 +240,6 @@
             ["Fresh Lime Soda", 150], ["Masala Chai", 120], ["Cold Coffee", 250], ["Virgin Mojito", 250]
         ]
     };
-    // (Note: To save tokens in the prompt, I shortened the 300 array. You can paste the full 300 array here safely).
 
     const menuItems = [];
     let idCounter = 1;
@@ -272,7 +249,6 @@
         });
     }
 
-    // Generate Dropdown HTML
     let selectDropdownHTML = `<select class="item-select" style="flex: 2;"><option value="" disabled selected>Select an Item...</option>`;
     const categories = Object.keys(menuRaw);
     categories.forEach(cat => {
@@ -284,7 +260,6 @@
     });
     selectDropdownHTML += `</select>`;
 
-    // --- 2. Initialization & Auto-Population ---
     window.onload = () => {
         document.getElementById('invoice-no').value = "25MOGSIX" + Math.floor(10000000 + Math.random() * 90000000);
 
@@ -356,11 +331,10 @@
         return str;
     }
 
-    // --- 3. Central Math Engine (Updated to match new DOCX tags exactly) ---
     function calculateInvoiceData() {
         const restId = parseInt(document.getElementById('restaurant-select').value);
-        const restaurant = restaurants.find(r => r.id === restId) || { name: "Pending Selection...", address: "", gstin: "", fssai: "" };
-        const legalName = document.getElementById('legal-name').value || 'Pending...';
+        const restaurant = restaurants.find(r => r.id === restId) || { name: "_________________", address: "_________________", gstin: "__________", fssai: "__________" };
+        const legalName = document.getElementById('legal-name').value || '_________________';
         const date = document.getElementById('invoice-date').value;
         const customer = document.getElementById('customer-name').value || 'Cash Customer';
         const address = document.getElementById('delivery-address').value || 'N/A';
@@ -372,7 +346,6 @@
         let itemsData = [];
         let items_gross = 0, items_discount = 0, items_net = 0, items_cgst = 0, items_sgst = 0, items_total = 0;
 
-        // Line item loops
         document.querySelectorAll('.item-row').forEach(row => {
             let selectElement = row.querySelector('.item-select');
             let itemId = parseInt(selectElement.value);
@@ -408,13 +381,11 @@
             });
         });
 
-        // Static Packing Charges as defined in docx template
         const pack_net = 29.19;
         const pack_cgst = 0.73;
         const pack_sgst = 0.73;
         const pack_total = 30.65;
 
-        // Final Subtotals
         let total_net = items_net + pack_net;
         let total_cgst = items_cgst + pack_cgst;
         let total_sgst = items_sgst + pack_sgst;
@@ -430,7 +401,7 @@
         };
     }
 
-    // --- 4. Preview & Print Logic (Opens in New Tab) ---
+    // --- HTML Print Matches Zomato Template Layout Perfectly ---
     function openPreview(action) {
         if(!document.getElementById('restaurant-select').value) {
             alert("Please select a restaurant first.");
@@ -463,45 +434,50 @@
                 <title>${data.invoiceNo} - Preview</title>
                 <style>
                     body { font-family: Arial, sans-serif; padding: 40px; color: #111; max-width: 900px; margin: auto; }
-                    h2 { text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 10px; }
-                    .header-info { font-size: 13px; margin-bottom: 20px; line-height: 1.6; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
-                    th, td { border: 1px solid #ccc; padding: 8px; text-align: right; }
-                    th { background: #f9f9f9; text-align: center; }
+                    .top-header { text-align: right; }
+                    .top-header h2 { font-size: 20px; font-weight: bold; margin: 0; }
+                    .top-header p { font-size: 13px; margin: 5px 0 20px 0; }
+                    .header-info { font-size: 12px; margin-bottom: 20px; line-height: 1.6; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px; }
+                    th, td { border: 1px solid #000; padding: 6px; text-align: right; }
+                    th { font-weight: bold; text-align: center; }
                     td:first-child, th:first-child { text-align: left; }
-                    .totals { text-align: right; margin-top: 20px; font-size: 14px; }
-                    .footer { margin-top: 40px; font-size: 12px; color: #555; border-top: 1px solid #eee; padding-top: 20px;}
+                    .totals { text-align: left; margin-top: 20px; font-size: 12px; font-weight: bold;}
+                    .footer { margin-top: 15px; font-size: 12px; line-height: 1.5;}
+                    .sign-box { margin-top: 50px; text-align: right; font-size: 12px; }
                     @media print { body { padding: 0; } }
                 </style>
             </head>
             <body>
-                <h2>${docTypeName}</h2>
+                
+                <div class="top-header">
+                    <h2>${docTypeName}</h2>
+                    <p>ORIGINAL For Recipient</p>
+                </div>
+                
                 <div class="header-info">
+                    <strong>Tax Invoice on behalf of -</strong><br>
                     <strong>Legal Entity Name:</strong> ${data.legalName}<br>
                     <strong>Restaurant Name:</strong> ${data.restaurant.name}<br>
-                    <strong>Address:</strong> ${data.restaurant.address} | <strong>GSTIN:</strong> ${data.restaurant.gstin}<br>
-                    <strong>FSSAI:</strong> ${data.restaurant.fssai}
+                    <strong>Restaurant Address:</strong> ${data.restaurant.address}<br>
+                    <strong>Restaurant GSTIN:</strong> ${data.restaurant.gstin}<br>
+                    <strong>Restaurant FSSAI:</strong> ${data.restaurant.fssai}<br>
+                    <strong>Invoice No.:</strong> ${data.invoiceNo}<br>
+                    <strong>Invoice Date:</strong> ${data.date}<br>
+                    <strong>Customer Name:</strong> ${data.customer}<br>
+                    <strong>Delivery Address:</strong> ${data.address}<br>
+                    <strong>State name & Place of Supply:</strong> ${data.state}<br>
+                    <strong>HSN Code:</strong> 996331<br>
+                    <strong>Service Description:</strong> Restaurant Service
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 13px; line-height: 1.6;">
-                    <div>
-                        <strong>Invoice No.:</strong> ${data.invoiceNo}<br>
-                        <strong>Date:</strong> ${data.date}<br>
-                        <strong>Customer:</strong> ${data.customer}<br>
-                        <strong>Delivery:</strong> ${data.address}<br>
-                        <strong>POS:</strong> ${data.state}
-                    </div>
-                    <div style="text-align: right;">
-                        <strong>HSN Code:</strong> 996331<br>
-                        <strong>Service:</strong> Restaurant Service
-                    </div>
-                </div>
+                
                 <table>
                     <thead>
                         <tr><th>Particulars</th><th>Gross</th><th>Discount</th><th>Net value</th><th>CGST (Rate)</th><th>CGST (INR)</th><th>SGST (Rate)</th><th>SGST (INR)</th><th>Total</th></tr>
                     </thead>
                     <tbody>
                         ${itemsHTML}
-                        <tr style="background:#fcfcfc;">
+                        <tr>
                             <td style="text-align:left;"><strong>Item(s) Total</strong></td>
                             <td><strong>${data.items_gross.toFixed(2)}</strong></td>
                             <td></td>
@@ -523,7 +499,7 @@
                             <td>0.73</td>
                             <td>30.65</td>
                         </tr>
-                        <tr style="background:#f2f2f2;">
+                        <tr>
                             <td style="text-align:left;"><strong>Total Value</strong></td>
                             <td></td>
                             <td></td>
@@ -536,14 +512,26 @@
                         </tr>
                     </tbody>
                 </table>
+                
                 <div class="totals">
-                    <h3>Final Total: ₹${data.final_total.toFixed(2)}</h3>
+                    Final Total: ${data.final_total.toFixed(2)}
                 </div>
+                
                 <div class="footer">
-                    <p><strong>Amount (in words):</strong> ${data.words}</p>
-                    <p>Amount of INR ${data.final_total.toFixed(2)} settled through digital mode/payment received against Order ID: ${data.orderId} dated ${data.date}</p>
-                    <p>Supply attracts reverse charge : No</p>
+                    Amount (in words): ${data.words}<br>
+                    Amount of ${data.final_total.toFixed(2)} settled through digital mode/payment received against Order ID: ${data.orderId} dated ${data.date}<br>
+                    Supply attracts reverse charge : No<br><br>
+                    <strong>For ETERNAL LIMITED (FORMERLY KNOWN AS ZOMATO LIMITED)</strong><br>
+                    Eternal PAN: AADCD4946L<br>
+                    Eternal CIN: L93030DL2010PLC198141<br>
+                    Eternal GST: 06AADCD4946L1ZE Eternal<br>
+                    FSSAI: 10019064001810
                 </div>
+
+                <div class="sign-box">
+                    Authorized Signatory
+                </div>
+
             </body>
             </html>
         `;
@@ -558,7 +546,6 @@
         }
     }
 
-    // --- 5. DOCX Download Logic (Matched strictly to new template tags) ---
     function loadFile(url, callback) { PizZipUtils.getBinaryContent(url, callback); }
 
     function generateDocxBill() {
@@ -590,24 +577,16 @@
                 customer_name: data.customer,
                 delivery_address: data.address,
                 place_of_supply: data.state,
-                
-                // Array Loop
                 items: data.itemsData, 
-                
-                // Item Subtotals
                 items_gross: data.items_gross.toFixed(2),
                 items_net: data.items_net.toFixed(2),
                 items_cgst: data.items_cgst.toFixed(2),
                 items_sgst: data.items_sgst.toFixed(2),
                 items_total: data.items_total.toFixed(2),
-
-                // Grand Totals (Including Static Packing Charge)
                 total_net: data.total_net.toFixed(2),
                 total_cgst: data.total_cgst.toFixed(2),
                 total_sgst: data.total_sgst.toFixed(2),
                 total: data.total.toFixed(2),
-                
-                // Absolute Rounded Final
                 final_total: data.final_total.toFixed(2),
                 amount_in_words: data.words,
                 order_id: data.orderId
