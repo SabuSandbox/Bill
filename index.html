@@ -120,9 +120,9 @@
 
         <form id="billing-form">
             <div class="form-group" style="margin-bottom: 15px;">
-                <label>Select Restaurant</label>
+                <label>Select Restaurant / Food Outlet</label>
                 <select id="restaurant-select">
-                    <option value="" disabled selected>Select a Restaurant...</option>
+                    <option value="" disabled selected>Select an Outlet...</option>
                 </select>
             </div>
             
@@ -186,49 +186,93 @@
 </div>
 
 <script>
+    // Expanded list (25 options) including Elite Dining, Casual Cafes, Fast Food, Food Trucks, and Carts
     const restaurants = [
-        { id: 1, name: "Cyber Hub Social", address: "DLF Cyber Hub, Phase 2, Gurugram", gstin: "06AADCC4946L1ZE", fssai: "10019064001810", legalName: "Rahul Sharma" },
-        { id: 2, name: "Farzi Cafe", address: "Ground Floor, Cyber Hub, Gurugram", gstin: "06BBECD4946M2XF", fssai: "10019064002999", legalName: "Priya Desai" },
-        { id: 3, name: "Indian Accent", address: "The Lodhi, Lodhi Road, New Delhi", gstin: "07AAACD1234E1Z1", fssai: "10020011003456", legalName: "Vikram Malhotra" },
-        { id: 4, name: "Dhaba Estd 1986", address: "Ambience Mall, NH-8, Gurugram", gstin: "06CCBBD9876K1Z2", fssai: "10021064001122", legalName: "Ananya Singh" },
-        { id: 5, name: "Comorin", address: "Two Horizon Center, Golf Course Rd, Gurugram", gstin: "06DDCCD5555M1Z3", fssai: "10018064009988", legalName: "Kabir Das" },
-        { id: 6, name: "Burma Burma", address: "Tower C, DLF Cyber City, Gurugram", gstin: "06EEFFD7777P1Z4", fssai: "10019011004433", legalName: "Meera Kapoor" },
-        { id: 7, name: "The Great Kabab Factory", address: "Radisson Blu, NH-8, Gurugram", gstin: "06GGHHD2222Q1Z5", fssai: "10022011005566", legalName: "Arjun Reddy" },
-        { id: 8, name: "Pirates of Grill", address: "MGF Megacity Mall, MG Road, Gurugram", gstin: "06IIJJD8888R1Z6", fssai: "10023011006677", legalName: "Sneha Patel" },
-        { id: 9, name: "Striker Pub & Brewery", address: "Sector 29, Gurugram", gstin: "06KKLLD4444S1Z7", fssai: "10024011007788", legalName: "Rohan Verma" },
-        { id: 10, name: "Prankster", address: "Sector 29 Market, Gurugram", gstin: "06MMNND6666T1Z8", fssai: "10025064008899", legalName: "Neha Gupta" }
+        // --- HIGH END / ELITE FINE DINING ---
+        { id: 1, name: "The Chambers (Fine Dining)", address: "The Taj Mahal Hotel, Man Singh Rd, New Delhi", gstin: "07AAAAT1102M1Z0", fssai: "10012011000214", legalName: "Taj Hotels Resorts PLC" },
+        { id: 2, name: "Indian Accent", address: "The Lodhi, Lodhi Road, New Delhi", gstin: "07AAACD1234E1Z1", fssai: "10020011003456", legalName: "Vikram Malhotra hospitality" },
+        { id: 3, name: "Comorin", address: "Two Horizon Center, Golf Course Rd, Gurugram", gstin: "06DDCCD5555M1Z3", fssai: "10018064009988", legalName: "EHV International Hospitality" },
+        { id: 4, name: "Le Cirque", address: "The Leela Palace, Diplomatic Enclave, New Delhi", gstin: "07AABCL4091A1ZX", fssai: "10014011001124", legalName: "Leela Palaces & Resorts" },
+        { id: 5, name: "Ziya", address: "The Oberoi, Nariman Point, Mumbai", gstin: "27AAATO0911M1ZP", fssai: "10011022000451", legalName: "Oberoi Hotels Group" },
+
+        // --- MID-TIER PREMIUM / POPULAR CASUAL ---
+        { id: 6, name: "Cyber Hub Social", address: "DLF Cyber Hub, Phase 2, Gurugram", gstin: "06AADCC4946L1ZE", fssai: "10019064001810", legalName: "Impresario Entertainment Ltd" },
+        { id: 7, name: "Farzi Cafe", address: "Ground Floor, Cyber Hub, Gurugram", gstin: "06BBECD4946M2XF", fssai: "10019064002999", legalName: "Massive Restaurants Pvt Ltd" },
+        { id: 8, name: "Dhaba Estd 1986", address: "Ambience Mall, NH-8, Gurugram", gstin: "06CCBBD9876K1Z2", fssai: "10021064001122", legalName: "Azure Hospitality Private Ltd" },
+        { id: 9, name: "Burma Burma", address: "Tower C, DLF Cyber City, Gurugram", gstin: "06EEFFD7777P1Z4", fssai: "10019011004433", legalName: "Hungry Heads Hospitality" },
+        { id: 10, name: "Striker Pub & Brewery", address: "Sector 29, Gurugram", gstin: "06KKLLD4444S1Z7", fssai: "10024011007788", legalName: "Rohan Verma Hospitality" },
+        { id: 11, name: "Prankster", address: "Sector 29 Market, Gurugram", gstin: "06MMNND6666T1Z8", fssai: "10025064008899", legalName: "Fresh & Brewed Concepts" },
+        { id: 12, name: "Pirates of Grill", address: "MGF Megacity Mall, MG Road, Gurugram", gstin: "06IIJJD8888R1Z6", fssai: "10023011006677", legalName: "SnP Gastronomy Ventures" },
+        { id: 13, name: "The Great Kabab Factory", address: "Radisson Blu, NH-8, Gurugram", gstin: "06GGHHD2222Q1Z5", fssai: "10022011005566", legalName: "Arjun Reddy Hospitality" },
+
+        // --- CAFE & FAST FOOD QSR ---
+        { id: 14, name: "The Blue Tokai Coffee", address: "Galleria Market, Sector 28, Gurugram", gstin: "06AABCB9012A1Z1", fssai: "10016011003889", legalName: "Blue Tokai Coffee Roasters" },
+        { id: 15, name: "Glen's Bakehouse", address: "Indiranagar 100ft Road, Bengaluru", gstin: "29AAACG4051B2ZK", fssai: "10015043000812", legalName: "Glens Artisan Foods Pvt Ltd" },
+        { id: 16, name: "Burger Singh", address: "Sector 14 Huda Market, Gurugram", gstin: "06AABCB1122C1ZY", fssai: "10018064001411", legalName: "Tipping Mr Pink Pvt Ltd" },
+        { id: 17, name: "Bigies Burger", address: "Noida Sector 62, Electronic City", gstin: "09AABCC7890D1ZX", fssai: "10020051000911", legalName: "Bigies Foodworks Group" },
+
+        // --- BUDGET / STREET-STYLE FOOD TRUCKS ---
+        { id: 18, name: "Waffles & Crepes Food Truck", address: "Leisure Valley Gate 2, Gurugram", gstin: "06AAXPR8812M1Z5", fssai: "20023064000145", legalName: "Sunny Anand (Micro-Vendor)" },
+        { id: 19, name: "The Pizza Wheeler (Mobile Truck)", address: "Sector 56 Huda Market Road, Gurugram", gstin: "06BKZPM9910A2Z9", fssai: "20022064000399", legalName: "Amit Sharma Mobile Kitchens" },
+        { id: 20, name: "Eats on Wheels (Chinese Express)", address: "Golf Course Extension Road, Gurugram", gstin: "06CKKPM4110K1Z1", fssai: "20024064001120", legalName: "Eats On Wheels Mobile Corp" },
+        { id: 21, name: "The BBQ Express Truck", address: "Near Cyber City Phase 3, Gurugram", gstin: "06MMPLS1029C1ZX", fssai: "20021064000782", legalName: "Barbeque Express Logistics" },
+
+        // --- ULTRA LOW / ROADSIDE CARTS & KIOSKS ---
+        { id: 22, name: "Raju Tomar Omelette & Egg Cart", address: "Opposite Vyapar Kendra, Sector 43, Gurugram", gstin: "NOT APPLICABLE", fssai: "20025064000011", legalName: "Raju Tomar (Street Vendor)" },
+        { id: 23, name: "Aggarwal Sweet & Samosa Corner Kiosk", address: "Sadar Bazaar Old Gurgaon, Gurugram", gstin: "06AAHFA1092P1Z0", fssai: "20022064000889", legalName: "Aggarwal Sweet Stall" },
+        { id: 24, name: "Gupta Ji Bombay Pav Bhaji Cart", address: "Sector 31 Market Parking, Gurugram", gstin: "NOT APPLICABLE", fssai: "20024064000102", legalName: "Ram Swaroop Gupta" },
+        { id: 25, name: "Sai Ram South Indian Dosa Cart", address: "Unitech Cyber Park Road, Sector 39, Gurugram", gstin: "NOT APPLICABLE", fssai: "20023064000251", legalName: "K. Srinivasan Meals Kiosk" }
     ];
 
+    // Significantly expanded item dictionary per food category
     const menuRaw = {
         "Snacks & Appetizers": [
             ["Punjabi Samosa (2 pcs)", 150], ["Aloo Tikki Chaat", 200], ["Dahi Bhalla", 220], ["Papdi Chaat", 180],
             ["Paneer Tikka", 450], ["Hara Bhara Kebab", 380], ["French Fries", 250], ["Chicken Tikka", 550],
-            ["Tandoori Chicken (Half)", 550], ["Mutton Galouti Kebab", 750], ["Fish Tikka", 850], ["Chicken 65", 550]
+            ["Tandoori Chicken (Half)", 550], ["Mutton Galouti Kebab", 750], ["Fish Tikka", 850], ["Chicken 65", 550],
+            ["Peri Peri Onion Rings", 290], ["Cheesy Corn Triangles", 320], ["Crispy Honey Chilli Potato", 360],
+            ["Tandoori Soya Chaap", 390], ["Mutton Seekh Kebab", 690], ["Dahi Ke Sholay", 340], ["Chicken Spring Rolls", 380]
         ],
-        "North Indian": [
+        "North Indian Main Course": [
             ["Dal Makhani", 380], ["Yellow Dal Tadka", 320], ["Paneer Butter Masala", 450], ["Kadai Paneer", 420],
             ["Malai Kofta", 450], ["Butter Chicken", 650], ["Chicken Tikka Masala", 650], ["Mutton Rogan Josh", 850],
-            ["Bhuna Gosht", 850], ["Fish Curry", 750]
+            ["Bhuna Gosht", 850], ["Fish Curry", 750], ["Mushroom Do Pyaza", 390], ["Paneer Lababdar", 460], 
+            ["Kadhai Murgh", 590], ["Rara Gosht Masala", 890], ["Aloo Gobhi Adraki", 280], ["Dum Aloo Kashmiri", 380]
         ],
-        "Breads & Rice": [
+        "Breads, Rice & Biryani": [
             ["Plain Roti", 40], ["Butter Naan", 110], ["Garlic Naan", 130], ["Lachha Paratha", 100],
-            ["Steamed Basmati Rice", 200], ["Jeera Rice", 250], ["Veg Dum Biryani", 450], ["Chicken Dum Biryani", 650]
+            ["Steamed Basmati Rice", 200], ["Jeera Rice", 250], ["Veg Dum Biryani", 450], ["Chicken Dum Biryani", 650],
+            ["Mutton Awadhi Biryani", 790], ["Rumali Roti", 60], ["Missi Roti", 75], ["Stuffed Amritsari Kulcha", 160],
+            ["Egg Fried Basmati Rice", 290], ["Peas Pulao", 240]
         ],
-        "South Indian": [
+        "South Indian Delights": [
             ["Idli Sambar (3 pcs)", 180], ["Medu Vada (2 pcs)", 180], ["Masala Dosa", 250], ["Mysore Masala Dosa", 280],
-            ["Onion Tomato Uttapam", 250], ["Chettinad Chicken", 550]
+            ["Onion Tomato Uttapam", 250], ["Chettinad Chicken", 550], ["Rava Onion Dosa", 260], ["Paneer Podi Dosa", 310],
+            ["Lemon Rice with Chutney", 210], ["Malabar Parotta with Veg Kurma", 340]
         ],
         "Chinese & Pan-Asian": [
             ["Veg Hakka Noodles", 350], ["Chilli Garlic Noodles", 380], ["Chicken Fried Rice", 420], ["Veg Manchurian", 380],
-            ["Chilli Chicken Gravy", 480], ["Dim Sum Veg (6 pcs)", 350], ["Sushi Roll California", 650]
+            ["Chilli Chicken Gravy", 480], ["Dim Sum Veg (6 pcs)", 350], ["Sushi Roll California", 650],
+            ["Chicken Steamed Momos (8 pcs)", 280], ["Pan Fried Chilli Fish", 690], ["Thai Green Curry Veg", 490], 
+            ["Schezwan Veg Fried Rice", 360], ["Kung Pao Chicken", 540], ["American Chopsuey", 410]
         ],
         "Italian & Continental": [
             ["Margherita Pizza", 550], ["Pepperoni Pizza", 850], ["Penne Arrabbiata", 550], ["Fettuccine Alfredo", 600],
-            ["Mushroom Risotto", 800], ["Grilled Chicken Breast", 750], ["Caesar Salad", 450]
+            ["Mushroom Risotto", 800], ["Grilled Chicken Breast", 750], ["Caesar Salad", 450],
+            ["BBQ Chicken Pizza", 720], ["Exotic Veg Garden Pizza", 640], ["Spaghetti Carbonara", 690], 
+            ["Garlic Bread with Cheese", 240], ["Baked Mac & Cheese Pasta", 510], ["Crispy Fish and Chips", 680]
+        ],
+        "Street Food & Cart Specials": [
+            ["Double Egg Butter Omelette", 80], ["Cheese Bread Omelette", 110], ["Vada Pav (2 pcs)", 60], 
+            ["Special Butter Pav Bhaji", 140], ["Cheese Pav Bhaji", 170], ["Chole Bhature (Special Plate)", 150],
+            ["Kathi Chicken Roll", 180], ["Double Paneer Tikka Roll", 160], ["Aloo Tikki Burger", 90], 
+            ["Maha Maharaja Veg Burger", 180], ["Mutton Kebab Burger", 240], ["Cheesy Loaded French Fries", 190]
         ],
         "Desserts & Beverages": [
             ["Gulab Jamun (2 pcs)", 180], ["Rasmalai (2 pcs)", 220], ["Brownie with Ice Cream", 350],
-            ["Fresh Lime Soda", 150], ["Masala Chai", 120], ["Cold Coffee", 250], ["Virgin Mojito", 250]
+            ["Fresh Lime Soda", 150], ["Masala Chai", 120], ["Cold Coffee", 250], ["Virgin Mojito", 250],
+            ["Kesar Pista Kulfi Scoop", 110], ["Moong Dal Halwa", 190], ["Chocolate Fudge Sundae", 290], 
+            ["Sweet Mango Lassi", 130], ["Iced Americano Coffee", 180], ["Diet Coke Can", 90], ["Mineral Water Bottle", 60]
         ]
     };
 
@@ -258,7 +302,7 @@
         restaurants.forEach(r => {
             let option = document.createElement('option');
             option.value = r.id;
-            option.textContent = `${r.name} (${r.address})`;
+            option.textContent = `${r.name} — ${r.address.substring(0, 45)}...`;
             restSelect.appendChild(option);
         });
         
@@ -279,13 +323,13 @@
         let selected = [];
         let attempts = 0;
 
-        while ((total < 4000 || total > 10000) && attempts < 1000) {
+        while ((total < 2000 || total > 9000) && attempts < 1000) {
             total = 0;
             selected = [];
-            let count = Math.floor(Math.random() * 6) + 5; 
+            let count = Math.floor(Math.random() * 5) + 4; 
             for (let i = 0; i < count; i++) {
                 let item = menuItems[Math.floor(Math.random() * menuItems.length)];
-                let qty = Math.floor(Math.random() * 4) + 1; 
+                let qty = Math.floor(Math.random() * 3) + 1; 
                 selected.push({ id: item.id, qty: qty });
                 total += (item.price * qty);
             }
@@ -372,6 +416,7 @@
             });
         });
 
+        // Set realistic packing values for food delivery or takeaway processing
         const pack_net = 29.19;
         const pack_cgst = 0.73;
         const pack_sgst = 0.73;
@@ -396,7 +441,7 @@
 
     function generateDocxBill() {
         if(!document.getElementById('restaurant-select').value) {
-            alert("Please select a restaurant before generating the document.");
+            alert("Please select a restaurant/outlet before generating the document.");
             return;
         }
 
@@ -405,7 +450,7 @@
 
         loadFile(templateFile, function(error, content) {
             if (error) { 
-                alert(`Could not load ${templateFile}. Make sure the file exists in the same folder.`);
+                alert(`Could not load ${templateFile}. Make sure it sits in the same directory path.`);
                 throw error; 
             };
             
