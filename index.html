@@ -53,17 +53,17 @@
 
         .form-header { text-align: center; margin-bottom: 35px; }
         .form-header h2 { font-size: 22px; font-weight: 500; margin-bottom: 8px; color: #fff; }
-        .form-header p { color: #aaa; font-size: 13px; margin: 0; } /* Tweaked for better visibility */
+        .form-header p { color: #aaa; font-size: 13px; margin: 0; } 
 
         .form-row { display: flex; gap: 20px; margin-bottom: 15px; }
         .form-group { flex: 1; }
         
-        label { display: block; font-weight: 400; margin-bottom: 8px; font-size: 12px; color: #ccc; } /* Enhanced contrast */
+        label { display: block; font-weight: 400; margin-bottom: 8px; font-size: 12px; color: #ccc; } 
         
         input[type="text"], input[type="number"], input[type="date"], select { 
             width: 100%; 
             padding: 12px 14px; 
-            background: rgba(255, 255, 255, 0.07); /* Increased background visibility */
+            background: rgba(255, 255, 255, 0.07); 
             border: 1px solid rgba(255, 255, 255, 0.2); 
             border-radius: 8px; 
             box-sizing: border-box; 
@@ -73,10 +73,9 @@
             transition: all 0.2s ease;
         }
         
-        input::placeholder { color: #888; } /* Brightened placeholders */
+        input::placeholder { color: #888; } 
         input:focus, select:focus { border-color: #7000ff; background: rgba(255, 255, 255, 0.1); }
 
-        /* Fixed options dropdown visibility across browsers */
         optgroup { font-weight: 600; color: #ffffff; background: #1a1125; }
         option { color: #ffffff; background: #1a1125; padding: 8px; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.8; cursor: pointer;}
@@ -132,7 +131,7 @@
                     <label>Document Type</label>
                     <select id="doc-type">
                         <option value="template.docx">Tax Invoice</option>
-                        <option value="receipt_template.docx">Payment Receipt</option>
+                        <option value="receipt_template.docx" selected>Payment Receipt (80mm)</option>
                     </select>
                 </div>
                 <div class="form-group">
