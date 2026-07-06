@@ -186,7 +186,6 @@
 </div>
 
 <script>
-    // Expanded list (25 options) including Elite Dining, Casual Cafes, Fast Food, Food Trucks, and Carts
     const restaurants = [
         // --- HIGH END / ELITE FINE DINING ---
         { id: 1, name: "The Chambers (Fine Dining)", address: "The Taj Mahal Hotel, Man Singh Rd, New Delhi", gstin: "07AAAAT1102M1Z0", fssai: "10012011000214", legalName: "Taj Hotels Resorts PLC" },
@@ -225,7 +224,6 @@
         { id: 25, name: "Sai Ram South Indian Dosa Cart", address: "Unitech Cyber Park Road, Sector 39, Gurugram", gstin: "NOT APPLICABLE", fssai: "20023064000251", legalName: "K. Srinivasan Meals Kiosk" }
     ];
 
-    // Significantly expanded item dictionary per food category
     const menuRaw = {
         "Snacks & Appetizers": [
             ["Punjabi Samosa (2 pcs)", 150], ["Aloo Tikki Chaat", 200], ["Dahi Bhalla", 220], ["Papdi Chaat", 180],
@@ -273,22 +271,22 @@
             ["Gulab Jamun (2 pcs)", 180], ["Rasmalai (2 pcs)", 220], ["Brownie with Ice Cream", 350],
             ["Fresh Lime Soda", 150], ["Masala Chai", 120], ["Cold Coffee", 250], ["Virgin Mojito", 250],
             ["Kesar Pista Kulfi Scoop", 110], ["Moong Dal Halwa", 190], ["Chocolate Fudge Sundae", 290], 
-            ["Sweet Mango Lassi", 130], ["Iced Americano Coffee", 180], ["Diet Coke Can", 90], ["Mineral Water Bottle", 60]
+            ["Sweet Mango Lassi", 130], ["Iced Americano Coffee", 180], ["Diet Coke Can", 90], ["Mineral Water Bottle", 60],
             ["Espresso", 150],
-        ["Doppio", 180],
-        ["Americano Hot", 180],
-        ["Americano Iced", 200],
-        ["Macchiato Hot", 180],
-        ["Macchiato Iced", 200],
-        ["Latte Hot", 220],
-        ["Latte Iced", 240],
-        ["Cappuccino Hot", 220],
-        ["Cappuccino Iced", 240],
-        ["Mocha Hot", 250],
-        ["Mocha Iced", 270],
-        ["Cold Brew", 250],
-        ["Vietnamese Coffee", 280],
-        ["Affogato", 280]
+            ["Doppio", 180],
+            ["Americano Hot", 180],
+            ["Americano Iced", 200],
+            ["Macchiato Hot", 180],
+            ["Macchiato Iced", 200],
+            ["Latte Hot", 220],
+            ["Latte Iced", 240],
+            ["Cappuccino Hot", 220],
+            ["Cappuccino Iced", 240],
+            ["Mocha Hot", 250],
+            ["Mocha Iced", 270],
+            ["Cold Brew", 250],
+            ["Vietnamese Coffee", 280],
+            ["Affogato", 280]
         ],
         "Mid-Range Whiskies": [
             ["Vat 69", 1100], ["Teacher's Highland Cream", 1300], ["Ballantine's Finest", 1400],
@@ -297,62 +295,58 @@
             ["Johnnie Walker Black Label", 3400], ["Chivas Regal 12 Year Old", 3500], ["Amrut Indian Single Malt", 3800], 
             ["Paul John Brilliance", 4000], ["The Glenlivet 12 Year Old", 4600], ["Glenfiddich 12 Year Old", 4800]
         ],
-    "Shakes": [
-        ["Coffee Shake", 310],
-        ["Milo", 280],
-        ["Dark Chocolate", 300],
-        ["Biscoff", 300],
-        ["KitKat", 300],
-        ["Oreo", 300],
-        ["Banana", 280],
-        ["Vanilla", 280],
-        ["Salted Caramel", 300]
+        "Shakes": [
+            ["Coffee Shake", 310],
+            ["Milo", 280],
+            ["Dark Chocolate", 300],
+            ["Biscoff", 300],
+            ["KitKat", 300],
+            ["Oreo", 300],
+            ["Banana", 280],
+            ["Vanilla", 280],
+            ["Salted Caramel", 300]
         ],
         "Matcha & More": [
-        ["Matcha Latte Hot", 400],
-        ["Matcha Latte Iced", 420],
-        ["Cereal Milk Matcha Hot", 420],
-        ["Cereal Milk Matcha Iced", 440],
-        ["Hojicha Latte Hot", 300],
-        ["Hojicha Latte Iced", 320],
-        ["Coconut Pandan Matcha Hot", 420],
-        ["Coconut Pandan Matcha Iced", 440],
-        ["Matcha & Watermelon", 400],
-        ["Banana Bread Matcha Hot", 420],
-        ["Banana Bread Matcha Iced", 440]
-    ],
- "Sandos": [
-        ["Egg Sheeran", 390],
-        ["Kiss My Hass", 510],
-        ["Fry Me To The Moon", 490],
-        ["Don't Go Bacon My ❤️", 510],
-        ["Bo'Tham'ian Rhapsody", 490],
-        ["Tuna Del Ray", 490],
-        ["Stand Bah-Miii", 550]
-    ],
- 
-    "Veg Sandos": [
-        ["Gangnam Style", 380],
-        ["Avopella", 450],
-        ["Bello-Ciao", 450],
-        ["Kun-Tou Fighting", 450]
-    ],
- 
-    "Ice-Cream Sandos": [
-        ["Dark Chocolate", 280],
-        ["Salted Caramel", 280],
-        ["Vanilla", 280]
-    ],
- 
-    "Side Kicks": [
-        ["Salted Fries", 250],
-        ["Cheese Fries", 300],
-        ["Truffle Fries", 350],
-        ["Fried Chicken", 410],
-        ["Slaw", 210],
-        ["Extra Sauce", 50]
-    ]
-},
+            ["Matcha Latte Hot", 400],
+            ["Matcha Latte Iced", 420],
+            ["Cereal Milk Matcha Hot", 420],
+            ["Cereal Milk Matcha Iced", 440],
+            ["Hojicha Latte Hot", 300],
+            ["Hojicha Latte Iced", 320],
+            ["Coconut Pandan Matcha Hot", 420],
+            ["Coconut Pandan Matcha Iced", 440],
+            ["Matcha & Watermelon", 400],
+            ["Banana Bread Matcha Hot", 420],
+            ["Banana Bread Matcha Iced", 440]
+        ],
+        "Sandos": [
+            ["Egg Sheeran", 390],
+            ["Kiss My Hass", 510],
+            ["Fry Me To The Moon", 490],
+            ["Don't Go Bacon My ❤️", 510],
+            ["Bo'Tham'ian Rhapsody", 490],
+            ["Tuna Del Ray", 490],
+            ["Stand Bah-Miii", 550]
+        ],
+        "Veg Sandos": [
+            ["Gangnam Style", 380],
+            ["Avopella", 450],
+            ["Bello-Ciao", 450],
+            ["Kun-Tou Fighting", 450]
+        ],
+        "Ice-Cream Sandos": [
+            ["Dark Chocolate", 280],
+            ["Salted Caramel", 280],
+            ["Vanilla", 280]
+        ],
+        "Side Kicks": [
+            ["Salted Fries", 250],
+            ["Cheese Fries", 300],
+            ["Truffle Fries", 350],
+            ["Fried Chicken", 410],
+            ["Slaw", 210],
+            ["Extra Sauce", 50]
+        ]
     };
 
     const menuItems = [];
@@ -385,7 +379,10 @@
             restSelect.appendChild(option);
         });
         
-        document.getElementById('invoice-date').valueAsDate = new Date();
+        // Corrected date initialization to be timezone safe
+        const today = new Date();
+        const localDate = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+        document.getElementById('invoice-date').value = localDate;
 
         restSelect.addEventListener('change', (e) => {
             const selectedRest = restaurants.find(r => r.id === parseInt(e.target.value));
@@ -495,7 +492,6 @@
             });
         });
 
-        // Set realistic packing values for food delivery or takeaway processing
         const pack_net = 29.19;
         const pack_cgst = 0.73;
         const pack_sgst = 0.73;
