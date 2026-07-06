@@ -368,29 +368,33 @@
     });
     selectDropdownHTML += `</select>`;
 
-    window.onload = () => {
-        document.getElementById('invoice-no').value = "25MOGSIX" + Math.floor(10000000 + Math.random() * 90000000);
+    // Changed from window.onload to DOMContentLoaded to bypass external script loading issues
+    document.addEventListener("DOMContentLoaded", () => {
+        try {
+            document.getElementById('invoice-no').value = "25MOGSIX" + Math.floor(10000000 + Math.random() * 90000000);
 
-        const restSelect = document.getElementById('restaurant-select');
-        restaurants.forEach(r => {
-            let option = document.createElement('option');
-            option.value = r.id;
-            option.textContent = `${r.name} — ${r.address.substring(0, 45)}...`;
-            restSelect.appendChild(option);
-        });
-        
-        // Corrected date initialization to be timezone safe
-        const today = new Date();
-        const localDate = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-        document.getElementById('invoice-date').value = localDate;
+            const restSelect = document.getElementById('restaurant-select');
+            restaurants.forEach(r => {
+                let option = document.createElement('option');
+                option.value = r.id;
+                option.textContent = `${r.name} — ${r.address.substring(0, 45)}...`;
+                restSelect.appendChild(option);
+            });
+            
+            const today = new Date();
+            const localDate = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+            document.getElementById('invoice-date').value = localDate;
 
-        restSelect.addEventListener('change', (e) => {
-            const selectedRest = restaurants.find(r => r.id === parseInt(e.target.value));
-            if(selectedRest) document.getElementById('legal-name').value = selectedRest.legalName;
-        });
+            restSelect.addEventListener('change', (e) => {
+                const selectedRest = restaurants.find(r => r.id === parseInt(e.target.value));
+                if(selectedRest) document.getElementById('legal-name').value = selectedRest.legalName;
+            });
 
-        autoFillInvoice();
-    };
+            autoFillInvoice();
+        } catch (error) {
+            console.error("Error during setup:", error);
+        }
+    });
 
     function autoFillInvoice() {
         const container = document.getElementById('items-container');
@@ -424,7 +428,7 @@
             <button type="button" class="remove-btn" title="Remove" onclick="this.parentElement.remove();">✕</button>
         `;
         container.appendChild(row);
-        if(selectedId) row.querySelector('.item-select').value = selectedId;
+        if(selectedId) row.querySelector('.item-select').value = String(selectedId);
     }
 
     function numberToWords(num) {
